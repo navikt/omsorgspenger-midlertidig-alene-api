@@ -1,0 +1,21 @@
+{
+  "topics": [
+    {
+      "topicName": "privat-omsorgspenger-midlertidig-alene-mottatt",
+      "configEntries": {
+        "retention.ms": -1
+      },
+      "members": [
+        {
+          "member": "srv-oms-alene-mtk",
+          "role": "PRODUCER"
+        },
+        {
+          "member": "O158190",
+          "role": "MANAGER"
+        }
+      ],
+      "numPartitions": 3
+    }
+  ]
+}

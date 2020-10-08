@@ -1,0 +1,335 @@
+package no.nav.omsorgspengermidlertidigalene
+
+import com.github.tomakehurst.wiremock.http.Cookie
+import com.typesafe.config.ConfigFactory
+import io.ktor.config.*
+import io.ktor.http.*
+import io.ktor.server.testing.*
+import io.ktor.util.*
+import no.nav.common.KafkaEnvironment
+import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
+import no.nav.helse.getAuthCookie
+import no.nav.omsorgspengermidlertidigalene.felles.*
+import no.nav.omsorgspengermidlertidigalene.kafka.Topics
+import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
+import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengesoknadApiConfig
+import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
+import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
+import no.nav.omsorgspengermidlertidigalene.wiremock.stubOppslagHealth
+import org.json.JSONObject
+import org.junit.AfterClass
+import org.junit.BeforeClass
+import org.skyscreamer.jsonassert.JSONAssert
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import java.util.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+
+private const val fnr = "290990123456"
+private const val ikkeMyndigFnr = "12125012345"
+
+// Se https://github.com/navikt/dusseldorf-ktor#f%C3%B8dselsnummer
+private val gyldigFodselsnummerA = "02119970078"
+
+@KtorExperimentalAPI
+class ApplicationTest {
+
+    private companion object {
+
+        private val logger: Logger = LoggerFactory.getLogger(ApplicationTest::class.java)
+
+        val wireMockServer = WireMockBuilder()
+            .withAzureSupport()
+            .withNaisStsSupport()
+            .withLoginServiceSupport()
+            .omsorgspengesoknadApiConfig()
+            .build()
+            .stubOppslagHealth()
+            .stubK9OppslagSoker()
+            .stubK9OppslagBarn()
+
+        private val kafkaEnvironment = KafkaWrapper.bootstrap()
+        private val kafkaTestConsumer = kafkaEnvironment.testConsumer()
+
+        fun getConfig(kafkaEnvironment: KafkaEnvironment): ApplicationConfig {
+            val fileConfig = ConfigFactory.load()
+            val testConfig = ConfigFactory.parseMap(
+                TestConfiguration.asMap(
+                    wireMockServer = wireMockServer,
+                    kafkaEnvironment = kafkaEnvironment
+                )
+            )
+            val mergedConfig = testConfig.withFallback(fileConfig)
+
+            return HoconApplicationConfig(mergedConfig)
+        }
+
+
+        val engine = TestApplicationEngine(createTestEnvironment {
+            config = getConfig(kafkaEnvironment)
+        })
+
+
+        @BeforeClass
+        @JvmStatic
+        fun buildUp() {
+            engine.start(wait = true)
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun tearDown() {
+            logger.info("Tearing down")
+            wireMockServer.stop()
+            RedisMockUtil.stopRedisMocked()
+            logger.info("Tear down complete")
+        }
+    }
+
+    @Test
+    fun `test isready, isalive, health og metrics`() {
+        with(engine) {
+            handleRequest(HttpMethod.Get, "/isready") {}.apply {
+                assertEquals(HttpStatusCode.OK, response.status())
+                handleRequest(HttpMethod.Get, "/isalive") {}.apply {
+                    assertEquals(HttpStatusCode.OK, response.status())
+                    handleRequest(HttpMethod.Get, "/metrics") {}.apply {
+                        assertEquals(HttpStatusCode.OK, response.status())
+                        handleRequest(HttpMethod.Get, "/health") {}.apply {
+                            assertEquals(HttpStatusCode.OK, response.status())
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `Henting av barn`() {
+        requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = "/barn",
+            expectedCode = HttpStatusCode.OK,
+            //language=JSON
+            expectedResponse = """
+            {
+                "barn": [{
+                    "fødselsdato": "2000-08-27",
+                    "fornavn": "BARN",
+                    "mellomnavn": "EN",
+                    "etternavn": "BARNESEN",
+                    "aktørId": "1000000000001"
+                }, 
+                {
+                    "fødselsdato": "2001-04-10",
+                    "fornavn": "BARN",
+                    "mellomnavn": "TO",
+                    "etternavn": "BARNESEN",
+                    "aktørId": "1000000000002"
+                }]
+            }
+            """.trimIndent(),
+            cookie = getAuthCookie(fnr)
+        )
+    }
+
+    @Test
+    fun `Har ingen registrerte barn`() {
+        requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = BARN_URL,
+            expectedCode = HttpStatusCode.OK,
+            expectedResponse = """
+            {
+                "barn": []
+            }
+            """.trimIndent(),
+            cookie = getAuthCookie("07077712345")
+        )
+    }
+
+    @Test
+    fun `Feil ved henting av barn skal returnere tom liste`() {
+        wireMockServer.stubK9OppslagBarn(simulerFeil = true)
+        requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = BARN_URL,
+            expectedCode = HttpStatusCode.OK,
+            expectedResponse = """
+            {
+                "barn": []
+            }
+            """.trimIndent(),
+            cookie = getAuthCookie(fnr)
+        )
+        wireMockServer.stubK9OppslagBarn()
+    }
+
+    @Test
+    fun `Hente søker`() {
+        requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = SØKER_URL,
+            expectedCode = HttpStatusCode.OK,
+            expectedResponse = """
+                {
+                  "aktørId": "12345",
+                  "fødselsdato": "1997-05-25",
+                  "fødselsnummer": "290990123456",
+                  "fornavn": "MOR",
+                  "mellomnavn": "HEISANN",
+                  "etternavn": "MORSEN",
+                  "myndig": true
+                }
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `Hente søker som ikke er myndig`() {
+        requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = SØKER_URL,
+            expectedCode = HttpStatusCode.OK,
+            cookie = getAuthCookie(ikkeMyndigFnr),
+            expectedResponse = """
+                {
+                  "aktørId": "12345",
+                  "fødselsdato": "2050-12-12",
+                  "fødselsnummer": "12125012345",
+                  "fornavn": "MOR",
+                  "mellomnavn": "HEISANN",
+                  "etternavn": "MORSEN",
+                  "myndig": false
+                }
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `Sende ugyldig søknad til validering`() {
+        val cookie = getAuthCookie(gyldigFodselsnummerA)
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Post,
+            path = VALIDERING_URL,
+            expectedResponse = """
+                {
+                  "type": "/problem-details/invalid-request-parameters",
+                  "title": "invalid-request-parameters",
+                  "status": 400,
+                  "detail": "Requesten inneholder ugyldige paramtere.",
+                  "instance": "about:blank",
+                  "invalid_parameters": [
+                    {
+                      "type": "entity",
+                      "name": "harBekreftetOpplysninger",
+                      "reason": "Opplysningene må bekreftes for å sende inn søknad.",
+                      "invalid_value": false
+                    },
+                    {
+                      "type": "entity",
+                      "name": "harForståttRettigheterOgPlikter",
+                      "reason": "Må ha forstått rettigheter og plikter for å sende inn søknad.",
+                      "invalid_value": false
+                    }
+                  ]
+                }
+            """.trimIndent(),
+            expectedCode = HttpStatusCode.BadRequest,
+            cookie = cookie,
+            requestEntity = SøknadUtils.gyldigSøknad.copy(
+                harBekreftetOpplysninger = false,
+                harForståttRettigheterOgPlikter = false
+            ).somJson()
+        )
+    }
+
+    @Test
+    fun `Sende gyldig søknad`() {
+        val cookie = getAuthCookie(gyldigFodselsnummerA)
+        val søknadID = UUID.randomUUID().toString()
+        val søknad = SøknadUtils.gyldigSøknad.copy(søknadId = søknadID).somJson()
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Post,
+            path = SØKNAD_URL,
+            expectedResponse = null,
+            expectedCode = HttpStatusCode.Accepted,
+            cookie = cookie,
+            requestEntity = søknad
+        )
+
+        val søknadSendtTilProsessering = hentSøknadSendtTilProsessering(søknadID)
+        verifiserAtInnholdetErLikt(JSONObject(søknad), søknadSendtTilProsessering)
+    }
+
+    @Test
+    fun `Sende søknad hvor søker ikke er myndig`() {
+        val cookie = getAuthCookie(ikkeMyndigFnr)
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Post,
+            path = SØKNAD_URL,
+            expectedResponse = """
+                {
+                    "type": "/problem-details/unauthorized",
+                    "title": "unauthorized",
+                    "status": 403,
+                    "detail": "Søkeren er ikke myndig og kan ikke sende inn søknaden.",
+                    "instance": "about:blank"
+                }
+            """.trimIndent(),
+            expectedCode = HttpStatusCode.Forbidden,
+            cookie = cookie,
+            requestEntity = SøknadUtils.gyldigSøknad.somJson()
+        )
+    }
+
+    private fun requestAndAssert(
+        httpMethod: HttpMethod,
+        path: String,
+        requestEntity: String? = null,
+        expectedResponse: String?,
+        expectedCode: HttpStatusCode,
+        leggTilCookie: Boolean = true,
+        cookie: Cookie = getAuthCookie(fnr)
+    ) {
+        with(engine) {
+            handleRequest(httpMethod, path) {
+                if (leggTilCookie) addHeader(HttpHeaders.Cookie, cookie.toString())
+                logger.info("Request Entity = $requestEntity")
+                addHeader(HttpHeaders.Accept, "application/json")
+                if (requestEntity != null) addHeader(HttpHeaders.ContentType, "application/json")
+                if (requestEntity != null) setBody(requestEntity)
+            }.apply {
+                logger.info("Response Entity = ${response.content}")
+                logger.info("Expected Entity = $expectedResponse")
+                assertEquals(expectedCode, response.status())
+                if (expectedResponse != null) {
+                    JSONAssert.assertEquals(expectedResponse, response.content!!, true)
+                } else {
+                    assertEquals(expectedResponse, response.content)
+                }
+            }
+        }
+    }
+
+    private fun hentSøknadSendtTilProsessering(soknadId: String): JSONObject {
+        return kafkaTestConsumer.hentSøknad(soknadId, topic = Topics.MOTTATT_OMS_MIDLERTIDIG_ALENE).data
+    }
+
+    private fun verifiserAtInnholdetErLikt(
+        søknadSendtInn: JSONObject,
+        søknadPlukketFraTopic: JSONObject
+    ) {
+        søknadPlukketFraTopic.remove("søker") //Fjerner søker og mottatt siden det settes i komplettSøknad
+        søknadPlukketFraTopic.remove("mottatt")
+
+        JSONAssert.assertEquals(søknadSendtInn, søknadPlukketFraTopic, true)
+
+        logger.info("Verifisering OK")
+    }
+}

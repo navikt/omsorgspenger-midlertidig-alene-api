@@ -1,0 +1,6 @@
+package no.nav.omsorgspengermidlertidigalene.felles
+
+const val SØKNAD_URL = "/soknad"
+const val BARN_URL = "/barn"
+const val SØKER_URL = "/soker"
+const val VALIDERING_URL = "/soknad/valider"
