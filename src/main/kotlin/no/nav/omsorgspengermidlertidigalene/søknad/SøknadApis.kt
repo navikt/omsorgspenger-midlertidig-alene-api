@@ -23,9 +23,9 @@ fun Route.søknadApis(
 ) {
 
     @Location(SØKNAD_URL)
-    class sendSoknad
+    class sendSøknad
 
-    post { _ : sendSoknad ->
+    post { _ : sendSøknad ->
         logger.info("Mottatt ny søknad.")
 
         logger.trace("Mapper søknad")

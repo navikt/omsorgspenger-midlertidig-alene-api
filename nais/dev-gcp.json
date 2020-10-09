@@ -8,11 +8,6 @@
   "ingresses": [
     "https://omsorgspenger-midlertidig-alene-api.dev.nav.no"
   ],
-  "kafkaBootstrapServers": [
-    "b27apvl00045.preprod.local",
-    "b27apvl00046.preprod.local",
-    "b27apvl00047.preprod.local"
-  ],
   "env": {
     "REDIS_HOST": "omsorgspenger-midlertidig-alene-api-redis.default.svc.nais.local",
     "CORS_ADDRESSES": "https://www-q0.nav.no",
