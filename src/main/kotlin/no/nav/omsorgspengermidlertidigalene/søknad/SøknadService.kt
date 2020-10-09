@@ -27,7 +27,7 @@ class SøknadService(
         idToken: IdToken,
         callId: CallId
     ) {
-        logger.info("Registrerer søknad.")
+        logger.info("Registrerer søknad med ID = {}", søknad.søknadId)
 
         logger.trace("Henter søker")
         val søker: Søker = søkerService.getSøker(idToken = idToken, callId = callId)
@@ -46,7 +46,6 @@ class SøknadService(
             harForståttRettigheterOgPlikter = søknad.harForståttRettigheterOgPlikter
         )
 
-        logger.info("Legger søknad med ID = {} til prosessering", søknad.søknadId)
         kafkaProducer.produce(søknad = komplettSoknad, metadata = metadata)
         logger.info("Søknad: {}", komplettSoknad) //TODO Fjernes fra prod
     }

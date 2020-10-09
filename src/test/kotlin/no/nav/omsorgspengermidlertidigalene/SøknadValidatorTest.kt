@@ -7,7 +7,7 @@ import org.junit.Test
 import kotlin.test.assertTrue
 
 
-internal class SøknadValideringsTest {
+internal class SøknadValidatorTest {
 
     companion object {
         private val gyldigFodselsnummerA = "02119970078"

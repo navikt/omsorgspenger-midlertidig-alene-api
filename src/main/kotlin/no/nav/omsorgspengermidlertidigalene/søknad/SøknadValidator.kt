@@ -20,7 +20,7 @@ internal fun Søknad.valider() {
                 parameterName = "harBekreftetOpplysninger",
                 parameterType = ParameterType.ENTITY,
                 reason = "Opplysningene må bekreftes for å sende inn søknad.",
-                invalidValue = false
+                invalidValue = harBekreftetOpplysninger
             )
         )
     }
@@ -31,7 +31,7 @@ internal fun Søknad.valider() {
                 parameterName = "harForståttRettigheterOgPlikter",
                 parameterType = ParameterType.ENTITY,
                 reason = "Må ha forstått rettigheter og plikter for å sende inn søknad.",
-                invalidValue = false
+                invalidValue = harForståttRettigheterOgPlikter
             )
         )
     }

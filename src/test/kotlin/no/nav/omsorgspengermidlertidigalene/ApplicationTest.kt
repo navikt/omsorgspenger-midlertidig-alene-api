@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 private const val fnr = "290990123456"
@@ -325,7 +326,10 @@ class ApplicationTest {
         søknadSendtInn: JSONObject,
         søknadPlukketFraTopic: JSONObject
     ) {
+        assertTrue(søknadPlukketFraTopic.has("søker"))
         søknadPlukketFraTopic.remove("søker") //Fjerner søker og mottatt siden det settes i komplettSøknad
+
+        assertTrue(søknadPlukketFraTopic.has("mottatt"))
         søknadPlukketFraTopic.remove("mottatt")
 
         JSONAssert.assertEquals(søknadSendtInn, søknadPlukketFraTopic, true)
