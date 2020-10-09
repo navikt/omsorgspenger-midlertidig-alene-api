@@ -116,7 +116,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
 
     install(Routing) {
 
-        val sokerGateway = SøkerGateway(
+        val søkerGateway = SøkerGateway(
             baseUrl = configuration.getK9OppslagUrl(),
             apiGatewayApiKey = apiGatewayApiKey
         )
@@ -127,7 +127,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
         )
 
         val søkerService = SøkerService(
-            søkerGateway = sokerGateway
+            søkerGateway = søkerGateway
         )
 
         val søknadKafkaProducer = SøknadKafkaProducer(

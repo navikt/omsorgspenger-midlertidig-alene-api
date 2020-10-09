@@ -27,12 +27,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-
-private const val fnr = "290990123456"
+private const val gyldigFodselsnummerA = "290990123456"
 private const val ikkeMyndigFnr = "12125012345"
-
-// Se https://github.com/navikt/dusseldorf-ktor#f%C3%B8dselsnummer
-private val gyldigFodselsnummerA = "02119970078"
 
 @KtorExperimentalAPI
 class ApplicationTest {
@@ -132,7 +128,7 @@ class ApplicationTest {
                 }]
             }
             """.trimIndent(),
-            cookie = getAuthCookie(fnr)
+            cookie = getAuthCookie(gyldigFodselsnummerA)
         )
     }
 
@@ -163,7 +159,7 @@ class ApplicationTest {
                 "barn": []
             }
             """.trimIndent(),
-            cookie = getAuthCookie(fnr)
+            cookie = getAuthCookie(gyldigFodselsnummerA)
         )
         wireMockServer.stubK9OppslagBarn()
     }
@@ -210,8 +206,24 @@ class ApplicationTest {
     }
 
     @Test
+    fun `Sende gyldig melding til validering`(){
+        val søknad = SøknadUtils.gyldigSøknad.somJson()
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Post,
+            path = SØKNAD_URL,
+            expectedResponse = null,
+            expectedCode = HttpStatusCode.Accepted,
+            requestEntity = søknad
+        )
+    }
+
+    @Test
     fun `Sende ugyldig søknad til validering`() {
-        val cookie = getAuthCookie(gyldigFodselsnummerA)
+        val ugyldigSøknad = SøknadUtils.gyldigSøknad.copy(
+            harBekreftetOpplysninger = false,
+            harForståttRettigheterOgPlikter = false
+        ).somJson()
 
         requestAndAssert(
             httpMethod = HttpMethod.Post,
@@ -240,17 +252,12 @@ class ApplicationTest {
                 }
             """.trimIndent(),
             expectedCode = HttpStatusCode.BadRequest,
-            cookie = cookie,
-            requestEntity = SøknadUtils.gyldigSøknad.copy(
-                harBekreftetOpplysninger = false,
-                harForståttRettigheterOgPlikter = false
-            ).somJson()
+            requestEntity = ugyldigSøknad
         )
     }
 
     @Test
-    fun `Sende gyldig søknad`() {
-        val cookie = getAuthCookie(gyldigFodselsnummerA)
+    fun `Sende gyldig søknad og plukke opp fra kafka topic`() {
         val søknadID = UUID.randomUUID().toString()
         val søknad = SøknadUtils.gyldigSøknad.copy(søknadId = søknadID).somJson()
 
@@ -259,7 +266,6 @@ class ApplicationTest {
             path = SØKNAD_URL,
             expectedResponse = null,
             expectedCode = HttpStatusCode.Accepted,
-            cookie = cookie,
             requestEntity = søknad
         )
 
@@ -296,7 +302,7 @@ class ApplicationTest {
         expectedResponse: String?,
         expectedCode: HttpStatusCode,
         leggTilCookie: Boolean = true,
-        cookie: Cookie = getAuthCookie(fnr)
+        cookie: Cookie = getAuthCookie(gyldigFodselsnummerA)
     ) {
         with(engine) {
             handleRequest(httpMethod, path) {

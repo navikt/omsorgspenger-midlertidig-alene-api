@@ -14,7 +14,7 @@ private val fnrDateFormat = DateTimeFormatter.ofPattern("ddMMyy")
 internal fun Søknad.valider() {
     val violations: MutableSet<Violation> = mutableSetOf()
 
-    if (!harBekreftetOpplysninger) {
+    if (harBekreftetOpplysninger er false) {
         violations.add(
             Violation(
                 parameterName = "harBekreftetOpplysninger",
@@ -25,7 +25,7 @@ internal fun Søknad.valider() {
         )
     }
 
-    if (!harForståttRettigheterOgPlikter) {
+    if (harForståttRettigheterOgPlikter er false) {
         violations.add(
             Violation(
                 parameterName = "harForståttRettigheterOgPlikter",
@@ -36,7 +36,6 @@ internal fun Søknad.valider() {
         )
     }
 
-// Ser om det er noen valideringsfeil
     if (violations.isNotEmpty()) {
         throw Throwblem(ValidationProblemDetails(violations))
     }
@@ -110,3 +109,5 @@ internal object Mod11 {
         }
     }
 }
+
+private infix fun Boolean.er(forventetVerdi: Boolean) = this == forventetVerdi

@@ -8,8 +8,6 @@ import no.nav.omsorgspengermidlertidigalene.søker.SøkerService
 import no.nav.omsorgspengermidlertidigalene.søker.validate
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
 
 
 class SøknadService(
@@ -37,16 +35,9 @@ class SøknadService(
         søker.validate()
         logger.trace("Søker OK.")
 
-        val komplettSoknad = KomplettSøknad(
-            språk = søknad.språk,
-            søknadId = søknad.søknadId,
-            mottatt = ZonedDateTime.now(ZoneOffset.UTC),
-            søker = søker,
-            harBekreftetOpplysninger = søknad.harBekreftetOpplysninger,
-            harForståttRettigheterOgPlikter = søknad.harForståttRettigheterOgPlikter
-        )
+        val komplettSøknad = søknad.tilKomplettSøknad(søker)
 
-        kafkaProducer.produce(søknad = komplettSoknad, metadata = metadata)
-        logger.info("Søknad: {}", komplettSoknad) //TODO Fjernes fra prod
+        kafkaProducer.produce(søknad = komplettSøknad, metadata = metadata)
+        logger.info("Søknad: {}", komplettSøknad) //TODO Fjernes fra prod
     }
 }

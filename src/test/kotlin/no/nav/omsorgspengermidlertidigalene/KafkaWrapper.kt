@@ -54,7 +54,7 @@ internal fun KafkaEnvironment.testConsumer() : KafkaConsumer<String, TopicEntry<
 }
 
 internal fun KafkaConsumer<String, TopicEntry<JSONObject>>.hentSøknad(
-    soknadId: String,
+    søknadId: String,
     maxWaitInSeconds: Long = 20,
     topic: String
 ) : TopicEntry<JSONObject> {
@@ -63,14 +63,14 @@ internal fun KafkaConsumer<String, TopicEntry<JSONObject>>.hentSøknad(
         seekToBeginning(assignment())
         val entries = poll(Duration.ofSeconds(1))
             .records(topic)
-            .filter { it.key() == soknadId }
+            .filter { it.key() == søknadId }
 
         if (entries.isNotEmpty()) {
             assertEquals(1, entries.size)
             return entries.first().value()
         }
     }
-    throw IllegalStateException("Fant ikke opprettet oppgave for søknad $soknadId etter $maxWaitInSeconds sekunder.")
+    throw IllegalStateException("Fant ikke opprettet oppgave for søknad $søknadId etter $maxWaitInSeconds sekunder.")
 }
 
 fun KafkaEnvironment.username() = username
