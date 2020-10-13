@@ -1,4 +1,4 @@
-# omsorgspenger-midlertidig-alene-api
+# Omsorgspenger-midlertidig-alene-api
 
 ![CI / CD](https://github.com/navikt/omsorgspenger-midlertidig-alene-api/workflows/CI%20/%20CD/badge.svg)
 ![NAIS Alerts](https://github.com/navikt/omsorgspenger-midlertidig-alene-api/workflows/Alerts/badge.svg)
@@ -53,8 +53,7 @@ Denne tjenesten understøtter søknadsprosessen, samt eksponerer endepunkt for i
 }
 ```
 
-**POST @/soknad/valider --> 202 respons ved gyldig søknad, ellers 400 og liste over feil. 
-                         Kan brukes før innsending for å sjekke om søknaden er gyldig **
+**POST @/soknad/valider --> 202 respons ved gyldig søknad, ellers 400 og liste over feil. Kan brukes før innsending for å sjekke om søknaden er gyldig**
 
 **POST @/soknad --> 202 respons ved gyldig søknad. Eventuelt tilbake 400 og liste over valideringsbrudd.**
 
