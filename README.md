@@ -17,14 +17,58 @@
 * [11. Drift og støtte](#11-drift-og-sttte)
 
 # 1. Kontekst
-API for søknad om ...
+API for søknad om å bli regnet som midlertidig alene
 
 # 2. Funksjonelle Krav
-Denne tjenesten understøtter søknadsprosessen, samt eksponerer endepunkt for innsending av søknad....
+Denne tjenesten understøtter søknadsprosessen, samt eksponerer endepunkt for innsending av søknad.
 
+# 3. Endepunkter
+**GET @/soker --> Gir 200 respons med json av søker**
+```
+{ 
+    "aktør_id": "23456",
+    "fornavn": "ARNE",
+    "mellomnavn": "BJARNE",
+    "etternavn": "CARLSEN",
+    "fødselsdato": "1990-01-02"
+}
+```
 
+**GET @/barn --> Gir 200 respons med json over barn, eventuelt tom liste ved ingen barn.**
+```
+{
+    "barn": [{
+        "fødselsdato": "2000-08-27",
+        "fornavn": "BARN",
+        "mellomnavn": "EN",
+        "etternavn": "BARNESEN",
+        "aktør_id": "1000000000001"
+    }, {
+        "fødselsdato": "2001-04-10",
+        "fornavn": "BARN",
+        "mellomnavn": "TO",
+        "etternavn": "BARNESEN",
+        "aktør_id": "1000000000002"
+    }]
+}
+```
 
-# 3. Begrensninger
+**POST @/soknad/valider --> 202 respons ved gyldig søknad, ellers 400 og liste over feil. 
+                         Kan brukes før innsending for å sjekke om søknaden er gyldig **
+
+**POST @/soknad --> 202 respons ved gyldig søknad. Eventuelt tilbake 400 og liste over valideringsbrudd.**
+
+Validering;
+> * harForståttRettigheterOgPliker og harBekreftetOpplysninger må være true
+
+Eksempel json;
+```
+{
+    "språk" : "nb",
+    "harForståttRettigheterOgPlikter": true,
+    "harBekreftetOpplysninger": true
+}
+```
 
 # 4. Prinsipper
 
