@@ -5,6 +5,7 @@
   "team": "dusseldorf",
   "minReplicas": "1",
   "maxReplicas": "2",
+  "tenant" : "trygdeetaten.no",
   "ingresses": [
     "https://omsorgspenger-midlertidig-alene-api.dev.nav.no"
   ],
