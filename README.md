@@ -1,4 +1,4 @@
-# Omsorgspenger-midlertidig-alene-api
+# Omsorgspenger midlertidig alene API
 
 ![CI / CD](https://github.com/navikt/omsorgspenger-midlertidig-alene-api/workflows/CI%20/%20CD/badge.svg)
 ![NAIS Alerts](https://github.com/navikt/omsorgspenger-midlertidig-alene-api/workflows/Alerts/badge.svg)
@@ -17,10 +17,13 @@
 * [11. Drift og støtte](#11-drift-og-sttte)
 
 # 1. Kontekst
-API for søknad om å bli regnet som midlertidig alene
+API for søknad om å bli regnet som midlertidig alene og Kafka producer. 
 
 # 2. Funksjonelle Krav
 Denne tjenesten understøtter søknadsprosessen, samt eksponerer endepunkt for innsending av søknad.
+
+API mottar søknaden, validerer og legger den videre på en kafka-topic som 
+omsorgspenger-midlertidig-alene-prosessering konsumerer.
 
 # 3. Endepunkter
 **GET @/soker --> Gir 200 respons med json av søker**
