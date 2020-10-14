@@ -333,10 +333,10 @@ class ApplicationTest {
         søknadPlukketFraTopic: JSONObject
     ) {
         assertTrue(søknadPlukketFraTopic.has("søker"))
-        søknadPlukketFraTopic.remove("søker") //Fjerner søker og mottatt siden det settes i komplettSøknad
+        søknadPlukketFraTopic.remove("søker") //Fjerner søker siden det settes i komplettSøknad
 
         assertTrue(søknadPlukketFraTopic.has("mottatt"))
-        søknadPlukketFraTopic.remove("mottatt")
+        søknadPlukketFraTopic.remove("mottatt") //Fjerner mottatt siden det settes i komplettSøknad
 
         JSONAssert.assertEquals(søknadSendtInn, søknadPlukketFraTopic, true)
 

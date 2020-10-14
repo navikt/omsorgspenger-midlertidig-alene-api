@@ -7,11 +7,6 @@ import io.ktor.routing.*
 import no.nav.omsorgspengermidlertidigalene.felles.SØKER_URL
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
 import no.nav.omsorgspengermidlertidigalene.general.getCallId
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-
-private val logger: Logger = LoggerFactory.getLogger("nav.sokerApis")
-
 
 @KtorExperimentalLocationsAPI
 fun Route.søkerApis(

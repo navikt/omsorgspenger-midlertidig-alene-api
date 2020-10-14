@@ -34,7 +34,7 @@ class SøkerGateway (
         private val attributter = Pair("a", listOf("aktør_id", "fornavn", "mellomnavn", "etternavn", "fødselsdato"))
     }
 
-    suspend fun hentSoker(
+    suspend fun hentSøker(
         idToken: IdToken,
         callId : CallId
     ) : SokerOppslagRespons {

@@ -6,12 +6,6 @@ import java.time.ZoneId
 private val ZONE_ID = ZoneId.of("Europe/Oslo")
 private const val MYNDIG_ALDER = 18L
 
-private fun erMyndig(fodselsdato: LocalDate) : Boolean {
-    val myndighetsDato = fodselsdato.plusYears(MYNDIG_ALDER)
-    val dagensDato = LocalDate.now(ZONE_ID)
-    return myndighetsDato.isBefore(dagensDato) || myndighetsDato.isEqual(dagensDato)
-}
-
 data class Søker (
     val aktørId: String,
     val fødselsdato: LocalDate,
@@ -21,4 +15,10 @@ data class Søker (
     val etternavn: String? = null,
     val myndig: Boolean = erMyndig(fødselsdato)
 )
+
+private fun erMyndig(fodselsdato: LocalDate) : Boolean {
+    val myndighetsDato = fodselsdato.plusYears(MYNDIG_ALDER)
+    val dagensDato = LocalDate.now(ZONE_ID)
+    return myndighetsDato.isBefore(dagensDato) || myndighetsDato.isEqual(dagensDato)
+}
 

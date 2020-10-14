@@ -6,11 +6,11 @@ import io.ktor.locations.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import no.nav.omsorgspengermidlertidigalene.felles.Metadata
 import no.nav.omsorgspengermidlertidigalene.felles.SØKNAD_URL
 import no.nav.omsorgspengermidlertidigalene.felles.VALIDERING_URL
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
 import no.nav.omsorgspengermidlertidigalene.general.getCallId
+import no.nav.omsorgspengermidlertidigalene.general.metadata
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -56,14 +56,4 @@ fun Route.søknadApis(
         logger.trace("Validering Ok.")
         call.respond(HttpStatusCode.Accepted)
     }
-}
-
-private fun ApplicationCall.metadata() = Metadata(
-    version = 1,
-    correlationId = getCallId().value,
-    requestId = response.getRequestId()
-)
-
-private fun ApplicationResponse.getRequestId(): String {
-    return headers[HttpHeaders.XRequestId] ?: throw IllegalStateException("Request Id ikke satt")
 }
