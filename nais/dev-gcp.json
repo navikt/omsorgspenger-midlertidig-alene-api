@@ -9,6 +9,11 @@
   "ingresses": [
     "https://omsorgspenger-midlertidig-alene-api.dev.nav.no"
   ],
+  "externalHosts": [
+    "api-gw-q1.oera.no",
+    "oauth2.googleapis.com",
+    "login.microsoftonline.com"
+  ],
   "env": {
     "REDIS_HOST": "omsorgspenger-midlertidig-alene-api-redis.default.svc.nais.local",
     "CORS_ADDRESSES": "https://www-q0.nav.no",
