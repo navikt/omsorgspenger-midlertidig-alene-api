@@ -6,6 +6,7 @@ import no.nav.omsorgspengermidlertidigalene.general.auth.IdToken
 import no.nav.omsorgspengermidlertidigalene.søker.Søker
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerService
 import no.nav.omsorgspengermidlertidigalene.søker.validate
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Søknad
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

@@ -1,8 +1,8 @@
 package no.nav.omsorgspengermidlertidigalene
 
 import no.nav.helse.dusseldorf.ktor.core.Throwblem
-import no.nav.omsorgspengermidlertidigalene.søknad.starterMedFodselsdato
-import no.nav.omsorgspengermidlertidigalene.søknad.valider
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.starterMedFodselsdato
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.valider
 import org.junit.Test
 import kotlin.test.assertTrue
 

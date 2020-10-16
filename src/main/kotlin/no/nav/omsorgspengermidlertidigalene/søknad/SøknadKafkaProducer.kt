@@ -10,6 +10,7 @@ import no.nav.omsorgspengermidlertidigalene.kafka.KafkaConfig
 import no.nav.omsorgspengermidlertidigalene.kafka.TopicEntry
 import no.nav.omsorgspengermidlertidigalene.kafka.TopicUse
 import no.nav.omsorgspengermidlertidigalene.kafka.Topics
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.KomplettSøknad
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.Serializer
