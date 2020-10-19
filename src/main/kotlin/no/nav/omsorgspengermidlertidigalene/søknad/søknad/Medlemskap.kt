@@ -11,10 +11,10 @@ data class Medlemskap(
 )
 
 internal fun Medlemskap.valider(): MutableSet<Violation> {
-    val violations: MutableSet<Violation> = mutableSetOf()
+    val mangler: MutableSet<Violation> = mutableSetOf()
 
     if(harBoddIUtlandetSiste12Mnd && utenlandsoppholdSiste12Mnd.isEmpty()){
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "utenlandsoppholdSiste12Mnd",
                 parameterType = ParameterType.ENTITY,
@@ -25,11 +25,11 @@ internal fun Medlemskap.valider(): MutableSet<Violation> {
     }
 
     utenlandsoppholdSiste12Mnd.forEachIndexed{index, utenlandsopphold ->
-        violations.addAll(utenlandsopphold.valider(relatertFelt = "medlemskap.utenlandsoppholdSiste12Mnd[$index]"))
+        mangler.addAll(utenlandsopphold.valider(relatertFelt = "medlemskap.utenlandsoppholdSiste12Mnd[$index]"))
     }
 
     if(skalBoIUtlandetNeste12Mnd && utenlandsoppholdNeste12Mnd.isEmpty()){
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "utenlandsoppholdNeste12Mnd",
                 parameterType = ParameterType.ENTITY,
@@ -40,8 +40,8 @@ internal fun Medlemskap.valider(): MutableSet<Violation> {
     }
 
     utenlandsoppholdNeste12Mnd.forEachIndexed{index, utenlandsopphold ->
-        violations.addAll(utenlandsopphold.valider(relatertFelt = "medlemskap.utenlandsoppholdNeste12Mnd[$index]"))
+        mangler.addAll(utenlandsopphold.valider(relatertFelt = "medlemskap.utenlandsoppholdNeste12Mnd[$index]"))
     }
 
-    return violations
+    return mangler
 }

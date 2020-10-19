@@ -13,10 +13,10 @@ data class Utenlandsopphold(
 )
 
 internal fun Utenlandsopphold.valider(relatertFelt: String): MutableSet<Violation> {
-    val violations: MutableSet<Violation> = mutableSetOf()
+    val mangler: MutableSet<Violation> = mutableSetOf()
 
     if(tilOgMed.isBefore(fraOgMed)){
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "$relatertFelt.tilOgMed",
                 parameterType = ParameterType.ENTITY,
@@ -27,7 +27,7 @@ internal fun Utenlandsopphold.valider(relatertFelt: String): MutableSet<Violatio
     }
 
     if(landkode.isNullOrBlank()){
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "$relatertFelt.landkode",
                 parameterType = ParameterType.ENTITY,
@@ -38,7 +38,7 @@ internal fun Utenlandsopphold.valider(relatertFelt: String): MutableSet<Violatio
     }
 
     if(landnavn.isNullOrBlank()){
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "$relatertFelt.landnavn",
                 parameterType = ParameterType.ENTITY,
@@ -48,7 +48,7 @@ internal fun Utenlandsopphold.valider(relatertFelt: String): MutableSet<Violatio
         )
     }
 
-    return violations
+    return mangler
 }
 
 data class UtenlandsoppholdIPerioden(
@@ -57,10 +57,10 @@ data class UtenlandsoppholdIPerioden(
 )
 
 internal fun UtenlandsoppholdIPerioden.valider(): MutableSet<Violation>{
-    val violations: MutableSet<Violation> = mutableSetOf()
+    val mangler: MutableSet<Violation> = mutableSetOf()
 
     if(skalOppholdeSegIUtlandetIPerioden er true && opphold.isEmpty()){
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "UtenlandsoppholdIPerioden.skalOppholdeSegIUtlandetIPerioden",
                 parameterType = ParameterType.ENTITY,
@@ -71,9 +71,9 @@ internal fun UtenlandsoppholdIPerioden.valider(): MutableSet<Violation>{
     }
 
     opphold.forEachIndexed{index, utenlandsopphold ->
-        violations.addAll(utenlandsopphold.valider(relatertFelt = "utenlandsoppholdIPerioden.opphold[$index]"))
+        mangler.addAll(utenlandsopphold.valider(relatertFelt = "utenlandsoppholdIPerioden.opphold[$index]"))
     }
 
-    return violations
+    return mangler
 }
 

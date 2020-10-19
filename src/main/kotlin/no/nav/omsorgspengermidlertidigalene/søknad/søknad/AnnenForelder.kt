@@ -24,10 +24,10 @@ enum class Situasjon(){
 }
 
 internal fun AnnenForelder.valider(): MutableSet<Violation> {
-    val violations: MutableSet<Violation> = mutableSetOf()
+    val mangler: MutableSet<Violation> = mutableSetOf()
 
     if(navn.isNullOrBlank()){
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "AnnenForelder.navn",
                 parameterType = ParameterType.ENTITY,
@@ -38,7 +38,7 @@ internal fun AnnenForelder.valider(): MutableSet<Violation> {
     }
 
     if(fnr.erGyldigNorskIdentifikator() er false){
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "AnnenForelder.fnr",
                 parameterType = ParameterType.ENTITY,
@@ -48,5 +48,5 @@ internal fun AnnenForelder.valider(): MutableSet<Violation> {
         )
     }
 
-    return violations
+    return mangler
 }

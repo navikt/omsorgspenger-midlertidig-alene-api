@@ -12,10 +12,10 @@ internal val vekttallProviderFnr2: (Int) -> Int = { arrayOf(5, 4, 3, 2, 7, 6, 5,
 private val fnrDateFormat = DateTimeFormatter.ofPattern("ddMMyy")
 
 internal fun Søknad.valider() {
-    val violations: MutableSet<Violation> = mutableSetOf()
+    val mangler: MutableSet<Violation> = mutableSetOf()
 
     if(antallBarn < 1){
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "antallBarn",
                 parameterType = ParameterType.ENTITY,
@@ -26,7 +26,7 @@ internal fun Søknad.valider() {
     }
 
     if (harBekreftetOpplysninger er false) {
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "harBekreftetOpplysninger",
                 parameterType = ParameterType.ENTITY,
@@ -37,7 +37,7 @@ internal fun Søknad.valider() {
     }
 
     if (harForståttRettigheterOgPlikter er false) {
-        violations.add(
+        mangler.add(
             Violation(
                 parameterName = "harForståttRettigheterOgPlikter",
                 parameterType = ParameterType.ENTITY,
@@ -49,7 +49,7 @@ internal fun Søknad.valider() {
 
     alderAvAlleBarn.forEachIndexed{index: Int, alder: Int ->
         if(alder < 0){
-            violations.add(
+            mangler.add(
                 Violation(
                     parameterName = "alderAvAlleBarn[$index]",
                     parameterType = ParameterType.ENTITY,
@@ -60,12 +60,12 @@ internal fun Søknad.valider() {
         }
     }
 
-    violations.addAll(utenlandsoppholdIPerioden.valider())
-    violations.addAll(annenForelder.valider())
-    violations.addAll(medlemskap.valider())
+    mangler.addAll(utenlandsoppholdIPerioden.valider())
+    mangler.addAll(annenForelder.valider())
+    mangler.addAll(medlemskap.valider())
 
-    if (violations.isNotEmpty()) {
-        throw Throwblem(ValidationProblemDetails(violations))
+    if (mangler.isNotEmpty()) {
+        throw Throwblem(ValidationProblemDetails(mangler))
     }
 }
 
