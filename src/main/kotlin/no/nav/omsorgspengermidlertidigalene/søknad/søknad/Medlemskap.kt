@@ -24,6 +24,17 @@ internal fun Medlemskap.valider(): MutableSet<Violation> {
         )
     }
 
+    if(harBoddIUtlandetSiste12Mnd er false && utenlandsoppholdSiste12Mnd.isNotEmpty()){
+        mangler.add(
+            Violation(
+                parameterName = "harBoddIUtlandetSiste12Mnd",
+                parameterType = ParameterType.ENTITY,
+                reason = "Hvis harBoddIUtlandetSiste12Mnd er false så kan ikke utenlandsoppholdSiste12Mnd inneholde noe ",
+                invalidValue = harBoddIUtlandetSiste12Mnd
+            )
+        )
+    }
+
     utenlandsoppholdSiste12Mnd.forEachIndexed{index, utenlandsopphold ->
         mangler.addAll(utenlandsopphold.valider(relatertFelt = "medlemskap.utenlandsoppholdSiste12Mnd[$index]"))
     }
@@ -35,6 +46,17 @@ internal fun Medlemskap.valider(): MutableSet<Violation> {
                 parameterType = ParameterType.ENTITY,
                 reason = "Hvis skalBoIUtlandetNeste12Mnd er true så kan ikke utenlandsoppholdNeste12Mnd være en tom liste ",
                 invalidValue = utenlandsoppholdNeste12Mnd
+            )
+        )
+    }
+
+    if(skalBoIUtlandetNeste12Mnd er false && utenlandsoppholdNeste12Mnd.isNotEmpty()){
+        mangler.add(
+            Violation(
+                parameterName = "skalBoIUtlandetNeste12Mnd",
+                parameterType = ParameterType.ENTITY,
+                reason = "Hvis skalBoIUtlandetNeste12Mnd er false så kan ikke utenlandsoppholdNeste12Mnd inneholde noe ",
+                invalidValue = skalBoIUtlandetNeste12Mnd
             )
         )
     }

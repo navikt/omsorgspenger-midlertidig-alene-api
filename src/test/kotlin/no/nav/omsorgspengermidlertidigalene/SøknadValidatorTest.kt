@@ -131,11 +131,29 @@ internal class SøknadValidatorTest {
     }
 
     @Test(expected = Throwblem::class)
-    fun `Feiler dersom medlemskao har harBoddIUtlandetSiste12Mnd til true men listen er tom `(){
+    fun `Feiler dersom medlemskap har harBoddIUtlandetSiste12Mnd til true men listen er tom `(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
             medlemskap = SøknadUtils.gyldigSøknad.medlemskap.copy(
                 skalBoIUtlandetNeste12Mnd = true,
                 utenlandsoppholdNeste12Mnd = listOf()
+            )
+        )
+        søknad.valider()
+    }
+
+    @Test(expected = Throwblem::class)
+    fun `Feiler dersom medlemskap har harBoddIUtlandetSiste12Mnd til false men listen inneholder et element`(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            medlemskap = SøknadUtils.gyldigSøknad.medlemskap.copy(
+                skalBoIUtlandetNeste12Mnd = false,
+                utenlandsoppholdNeste12Mnd = listOf(
+                    Utenlandsopphold(
+                        fraOgMed = LocalDate.now(),
+                        tilOgMed = LocalDate.now().minusDays(1),
+                        landnavn = "Sverige",
+                        landkode = "SWE"
+                    )
+                )
             )
         )
         søknad.valider()
@@ -149,6 +167,24 @@ internal class SøknadValidatorTest {
                 opphold = listOf()
                 )
             )
+        søknad.valider()
+    }
+
+    @Test(expected = Throwblem::class)
+    fun `Feiler dersom utenlandsoppholdIPerioden skalOppholdeSegIUtlandetIPerioden er false med opphold er ikke tom`(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            utenlandsoppholdIPerioden = SøknadUtils.gyldigSøknad.utenlandsoppholdIPerioden.copy(
+                skalOppholdeSegIUtlandetIPerioden = false,
+                opphold = listOf(
+                    Utenlandsopphold(
+                        fraOgMed = LocalDate.now(),
+                        tilOgMed = LocalDate.now().minusDays(1),
+                        landnavn = "Sverige",
+                        landkode = "SWE"
+                    )
+                )
+            )
+        )
         søknad.valider()
     }
 
