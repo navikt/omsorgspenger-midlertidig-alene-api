@@ -14,6 +14,17 @@ private val fnrDateFormat = DateTimeFormatter.ofPattern("ddMMyy")
 internal fun Søknad.valider() {
     val violations: MutableSet<Violation> = mutableSetOf()
 
+    if(antallBarn < 1){
+        violations.add(
+            Violation(
+                parameterName = "antallBarn",
+                parameterType = ParameterType.ENTITY,
+                reason = "antallBarn kan ikke være mindre enn 1",
+                invalidValue = antallBarn
+            )
+        )
+    }
+
     if (harBekreftetOpplysninger er false) {
         violations.add(
             Violation(
@@ -35,6 +46,23 @@ internal fun Søknad.valider() {
             )
         )
     }
+
+    alderAvAlleBarn.forEachIndexed{index: Int, alder: Int ->
+        if(alder < 0){
+            violations.add(
+                Violation(
+                    parameterName = "alderAvAlleBarn[$index]",
+                    parameterType = ParameterType.ENTITY,
+                    reason = "Alder på barn kan ikke være mindre enn 0",
+                    invalidValue = alder
+                )
+            )
+        }
+    }
+
+    violations.addAll(utenlandsoppholdIPerioden.valider())
+    violations.addAll(annenForelder.valider())
+    violations.addAll(medlemskap.valider())
 
     if (violations.isNotEmpty()) {
         throw Throwblem(ValidationProblemDetails(violations))
@@ -110,4 +138,4 @@ internal object Mod11 {
     }
 }
 
-private infix fun Boolean.er(forventetVerdi: Boolean) = this == forventetVerdi
+internal infix fun Boolean.er(forventetVerdi: Boolean) = this == forventetVerdi

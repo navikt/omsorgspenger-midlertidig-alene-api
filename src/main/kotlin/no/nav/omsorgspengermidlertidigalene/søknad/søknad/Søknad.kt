@@ -15,7 +15,7 @@ data class Søknad(
     val antallBarn: Int,
     val alderAvAlleBarn: List<Int>,
     val medlemskap: Medlemskap,
-    val utenlandsoppholdIPerioden: UtenlandsoppholdIPerioden?,
+    val utenlandsoppholdIPerioden: UtenlandsoppholdIPerioden, //TODO Sender frontend null, eller sender de med objektet også er heller felter der false/tom?
     val harForståttRettigheterOgPlikter: Boolean,
     val harBekreftetOpplysninger: Boolean
 ) {
