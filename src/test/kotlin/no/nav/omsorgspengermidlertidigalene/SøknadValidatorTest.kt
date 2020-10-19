@@ -29,6 +29,13 @@ internal class SøknadValidatorTest {
     }
 
     @Test(expected = Throwblem::class)
+    fun `Feiler dersom antall barn er 0 eller mindre`(){
+        SøknadUtils.gyldigSøknad.copy(
+            antallBarn = 0
+        ).valider()
+    }
+
+    @Test(expected = Throwblem::class)
     fun `Feiler dersom harForståttRettigheterOgPlikter er false`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
             harForståttRettigheterOgPlikter = false
@@ -42,13 +49,6 @@ internal class SøknadValidatorTest {
             harBekreftetOpplysninger = false
         )
         søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom antall barn er 0 eller mindre`(){
-        SøknadUtils.gyldigSøknad.copy(
-            antallBarn = 0
-        ).valider()
     }
 
     @Test(expected = Throwblem::class)
@@ -125,6 +125,17 @@ internal class SøknadValidatorTest {
                         landkode = "SWE"
                     )
                 )
+            )
+        )
+        søknad.valider()
+    }
+
+    @Test(expected = Throwblem::class)
+    fun `Feiler dersom medlemskao har harBoddIUtlandetSiste12Mnd til true men listen er tom `(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            medlemskap = SøknadUtils.gyldigSøknad.medlemskap.copy(
+                skalBoIUtlandetNeste12Mnd = true,
+                utenlandsoppholdNeste12Mnd = listOf()
             )
         )
         søknad.valider()

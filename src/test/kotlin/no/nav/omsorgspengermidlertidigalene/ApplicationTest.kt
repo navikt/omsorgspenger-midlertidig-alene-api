@@ -12,6 +12,9 @@ import no.nav.helse.getAuthCookie
 import no.nav.omsorgspengermidlertidigalene.felles.*
 import no.nav.omsorgspengermidlertidigalene.kafka.Topics
 import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Medlemskap
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Utenlandsopphold
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.UtenlandsoppholdIPerioden
 import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengesoknadApiConfig
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
@@ -22,6 +25,7 @@ import org.junit.BeforeClass
 import org.skyscreamer.jsonassert.JSONAssert
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -292,6 +296,100 @@ class ApplicationTest {
             expectedCode = HttpStatusCode.Forbidden,
             cookie = cookie,
             requestEntity = SøknadUtils.gyldigSøknad.somJson()
+        )
+    }
+
+    @Test
+    fun `Sende søknad som inneholder ugydlig medlemskap`(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            medlemskap = Medlemskap(
+                harBoddIUtlandetSiste12Mnd = true,
+                utenlandsoppholdSiste12Mnd = listOf(
+                    Utenlandsopphold(
+                        fraOgMed = LocalDate.parse("2020-01-01"),
+                        tilOgMed = LocalDate.parse("2020-01-10"),
+                        landkode = "Sverige",
+                        landnavn = "SWE"
+                    ),
+                    Utenlandsopphold(
+                        fraOgMed = LocalDate.parse("2020-01-10"),
+                        tilOgMed = LocalDate.parse("2020-01-09"),
+                        landkode = " ",
+                        landnavn = " "
+                    )
+                ),
+                skalBoIUtlandetNeste12Mnd = false
+            )
+        )
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Post,
+            path = SØKNAD_URL,
+            expectedResponse = """
+                {
+                  "detail": "Requesten inneholder ugyldige paramtere.",
+                  "instance": "about:blank",
+                  "type": "/problem-details/invalid-request-parameters",
+                  "title": "invalid-request-parameters",
+                  "invalid_parameters": [
+                    {
+                      "name": "medlemskap.utenlandsoppholdSiste12Mnd[1].tilOgMed",
+                      "reason": "tilOgMed kan ikke være før fraOgMed",
+                      "invalid_value": "2020-01-09",
+                      "type": "entity"
+                    },
+                    {
+                      "name": "medlemskap.utenlandsoppholdSiste12Mnd[1].landkode",
+                      "reason": "Landkode er ikke gyldig",
+                      "invalid_value": " ",
+                      "type": "entity"
+                    },
+                    {
+                      "name": "medlemskap.utenlandsoppholdSiste12Mnd[1].landnavn",
+                      "reason": "Landnavn er ikke gyldig",
+                      "invalid_value": " ",
+                      "type": "entity"
+                    }
+                  ],
+                  "status": 400
+                }
+            """.trimIndent(),
+            expectedCode = HttpStatusCode.BadRequest,
+            requestEntity = søknad.somJson()
+        )
+    }
+
+    @Test
+    fun `Sende søknad som inneholder ugyldig UtenlandsoppholdIPerioden`(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            utenlandsoppholdIPerioden = UtenlandsoppholdIPerioden(
+                skalOppholdeSegIUtlandetIPerioden = true,
+                opphold = listOf()
+            )
+        )
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Post,
+            path = SØKNAD_URL,
+            expectedResponse = """
+                {
+                  "detail": "Requesten inneholder ugyldige paramtere.",
+                  "instance": "about:blank",
+                  "type": "/problem-details/invalid-request-parameters",
+                  "title": "invalid-request-parameters",
+                  "invalid_parameters": [
+                    {
+                      "name": "UtenlandsoppholdIPerioden.skalOppholdeSegIUtlandetIPerioden",
+                      "reason": "Hvis skalOppholdeSegIUtlandetIPerioden er true så kan ikke opphold være en tom liste",
+                      "invalid_value": true,
+                      "type": "entity"
+                    }
+                  ],
+                  "status": 400
+                }
+            """.trimIndent(),
+            expectedCode = HttpStatusCode.BadRequest,
+            requestEntity = søknad.somJson()
         )
     }
 
