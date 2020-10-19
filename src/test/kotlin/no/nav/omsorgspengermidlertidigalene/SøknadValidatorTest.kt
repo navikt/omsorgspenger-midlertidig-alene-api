@@ -188,4 +188,11 @@ internal class SøknadValidatorTest {
         søknad.valider()
     }
 
+    @Test(expected = Throwblem::class)
+    fun `Skal feile dersom arbedissituasjon er tom`(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            arbeidssituasjon = listOf()
+        )
+        søknad.valider()
+    }
 }

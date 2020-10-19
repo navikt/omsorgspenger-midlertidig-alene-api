@@ -25,6 +25,17 @@ internal fun Søknad.valider() {
         )
     }
 
+    if(arbeidssituasjon.isEmpty()){
+        mangler.add(
+            Violation(
+                parameterName = "arbeidssituasjon",
+                parameterType = ParameterType.ENTITY,
+                reason = "arbeidssituasjon kan ikke være tom",
+                invalidValue = arbeidssituasjon
+            )
+        )
+    }
+
     if (harBekreftetOpplysninger er false) {
         mangler.add(
             Violation(
