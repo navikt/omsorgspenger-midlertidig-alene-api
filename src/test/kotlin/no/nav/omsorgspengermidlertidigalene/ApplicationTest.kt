@@ -393,6 +393,126 @@ class ApplicationTest {
         )
     }
 
+    @Test
+    fun `Sende søknad som inneholder null feil på alle bolske verdier`(){
+        val søknadSomJson = """
+            {
+              "id": "123456789",
+              "språk": "nb",
+              "arbeidssituasjon": [
+                "FRILANSER"
+              ],
+              "annenForelder": {
+                "navn": "Berit",
+                "fnr": "02119970078",
+                "situasjon": "FENGSEL",
+                "situasjonBeskrivelse": "Sitter i fengsel..",
+                "periodeOver6Måneder": null,
+                "periodeFraOgMed": "2020-01-01",
+                "periodeTilOgMed": "2020-10-01"
+              },
+              "antallBarn": 2,
+              "alderAvAlleBarn": [
+                5,
+                3
+              ],
+              "medlemskap": {
+                "harBoddIUtlandetSiste12Mnd": null,
+                "utenlandsoppholdSiste12Mnd": [
+                  {
+                    "fraOgMed": "2020-01-01",
+                    "tilOgMed": "2020-01-10",
+                    "landkode": "DE",
+                    "landnavn": "Tyskland"
+                  },
+                  {
+                    "fraOgMed": "2020-01-01",
+                    "tilOgMed": "2020-01-10",
+                    "landkode": "SWE",
+                    "landnavn": "Sverige"
+                  }
+                ],
+                "skalBoIUtlandetNeste12Mnd": null,
+                "utenlandsoppholdNeste12Mnd": [
+                  {
+                    "fraOgMed": "2020-10-01",
+                    "tilOgMed": "2020-10-10",
+                    "landkode": "BR",
+                    "landnavn": "Brasil"
+                  }
+                ]
+              },
+              "utenlandsoppholdIPerioden": {
+                "skalOppholdeSegIUtlandetIPerioden": null,
+                "opphold": [
+                  {
+                    "fraOgMed": "2020-01-11",
+                    "tilOgMed": "2020-01-12",
+                    "landkode": "BR",
+                    "landnavn": "Brasil"
+                  },
+                  {
+                    "fraOgMed": "2020-01-01",
+                    "tilOgMed": "2020-01-10",
+                    "landkode": "SWE",
+                    "landnavn": "Sverige"
+                  }
+                ]
+              },
+              "harForståttRettigheterOgPlikter": null,
+              "harBekreftetOpplysninger": null
+            }
+        """.trimIndent()
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Post,
+            path = SØKNAD_URL,
+            expectedResponse = """
+                {
+                  "detail": "Requesten inneholder ugyldige paramtere.",
+                  "instance": "about:blank",
+                  "type": "/problem-details/invalid-request-parameters",
+                  "title": "invalid-request-parameters",
+                  "invalid_parameters": [
+                    {
+                      "type": "entity",
+                      "name": "harBekreftetOpplysninger",
+                      "reason": "harBekreftetOpplysninger kan ikke være null"
+                    },
+                    {
+                      "type": "entity",
+                      "name": "harForståttRettigheterOgPlikter",
+                      "reason": "harForståttRettigheterOgPlikter kan ikke være null"
+                    },
+                    {
+                      "type": "entity",
+                      "name": "skalOppholdeSegIUtlandetIPerioden",
+                      "reason": "skalOppholdeSegIUtlandetIPerioden kan ikke være null"
+                    },
+                    {
+                      "type": "entity",
+                      "name": "periodeOver6Måneder",
+                      "reason": "periodeOver6Måneder kan ikke være null"
+                    },
+                    {
+                      "type": "entity",
+                      "name": "harBoddIUtlandetSiste12Mnd",
+                      "reason": "harBoddIUtlandetSiste12Mnd kan ikke være null"
+                    },
+                    {
+                      "type": "entity",
+                      "name": "skalBoIUtlandetNeste12Mnd",
+                      "reason": "skalBoIUtlandetNeste12Mnd kan ikke være null"
+                    }
+                  ],
+                  "status": 400
+                }
+            """.trimIndent(),
+            expectedCode = HttpStatusCode.BadRequest,
+            requestEntity = søknadSomJson
+        )
+    }
+
     private fun requestAndAssert(
         httpMethod: HttpMethod,
         path: String,

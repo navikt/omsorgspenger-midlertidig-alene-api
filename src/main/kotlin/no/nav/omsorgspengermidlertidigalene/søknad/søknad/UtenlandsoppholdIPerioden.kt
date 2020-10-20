@@ -4,14 +4,25 @@ import no.nav.helse.dusseldorf.ktor.core.ParameterType
 import no.nav.helse.dusseldorf.ktor.core.Violation
 
 data class UtenlandsoppholdIPerioden(
-    val skalOppholdeSegIUtlandetIPerioden: Boolean,
+    val skalOppholdeSegIUtlandetIPerioden: Boolean? = null, //Settes til null for å unngå default false
     val opphold: List<Utenlandsopphold> = listOf() //TODO Sender frontend null eller tom liste?
 )
 
 internal fun UtenlandsoppholdIPerioden.valider(): MutableSet<Violation>{
     val mangler: MutableSet<Violation> = mutableSetOf()
 
-    if(skalOppholdeSegIUtlandetIPerioden && opphold.isEmpty()){
+    if(skalOppholdeSegIUtlandetIPerioden er null){
+        mangler.add(
+            Violation(
+                parameterName = "skalOppholdeSegIUtlandetIPerioden",
+                parameterType = ParameterType.ENTITY,
+                reason = "skalOppholdeSegIUtlandetIPerioden kan ikke være null",
+                invalidValue = skalOppholdeSegIUtlandetIPerioden
+            )
+        )
+    }
+
+    if(skalOppholdeSegIUtlandetIPerioden er true && opphold.isEmpty()){
         mangler.add(
             Violation(
                 parameterName = "UtenlandsoppholdIPerioden.skalOppholdeSegIUtlandetIPerioden",

@@ -44,9 +44,25 @@ internal class SøknadValidatorTest {
     }
 
     @Test(expected = Throwblem::class)
+    fun `Feiler dersom harForståttRettigheterOgPlikter er null`(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            harForståttRettigheterOgPlikter = null
+        )
+        søknad.valider()
+    }
+
+    @Test(expected = Throwblem::class)
     fun `Feiler dersom harBekreftetOpplysninger er false`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
             harBekreftetOpplysninger = false
+        )
+        søknad.valider()
+    }
+
+    @Test(expected = Throwblem::class)
+    fun `Feiler dersom harBekreftetOpplysninger er null`(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            harBekreftetOpplysninger = null
         )
         søknad.valider()
     }
@@ -149,11 +165,22 @@ internal class SøknadValidatorTest {
                 utenlandsoppholdNeste12Mnd = listOf(
                     Utenlandsopphold(
                         fraOgMed = LocalDate.now(),
-                        tilOgMed = LocalDate.now().minusDays(1),
+                        tilOgMed = LocalDate.now().plusDays(1),
                         landnavn = "Sverige",
                         landkode = "SWE"
                     )
                 )
+            )
+        )
+        søknad.valider()
+    }
+
+    @Test(expected = Throwblem::class)
+    fun `Feiler dersom medlemskap har harBoddIUtlandetSiste12Mnd til null`(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            medlemskap = SøknadUtils.gyldigSøknad.medlemskap.copy(
+                skalBoIUtlandetNeste12Mnd = null,
+                utenlandsoppholdNeste12Mnd = listOf()
             )
         )
         søknad.valider()
@@ -183,6 +210,17 @@ internal class SøknadValidatorTest {
                         landkode = "SWE"
                     )
                 )
+            )
+        )
+        søknad.valider()
+    }
+
+    @Test(expected = Throwblem::class)
+    fun `Feiler dersom utenlandsoppholdIPerioden skalOppholdeSegIUtlandetIPerioden er null`(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            utenlandsoppholdIPerioden = SøknadUtils.gyldigSøknad.utenlandsoppholdIPerioden.copy(
+                skalOppholdeSegIUtlandetIPerioden = null,
+                opphold = listOf()
             )
         )
         søknad.valider()

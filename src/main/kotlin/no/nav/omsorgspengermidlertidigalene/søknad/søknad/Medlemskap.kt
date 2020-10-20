@@ -4,16 +4,27 @@ import no.nav.helse.dusseldorf.ktor.core.ParameterType
 import no.nav.helse.dusseldorf.ktor.core.Violation
 
 data class Medlemskap(
-    val harBoddIUtlandetSiste12Mnd: Boolean,
+    val harBoddIUtlandetSiste12Mnd: Boolean? = null, //Settes til null for å unngå default false
     val utenlandsoppholdSiste12Mnd: List<Utenlandsopphold> = listOf(),
-    val skalBoIUtlandetNeste12Mnd: Boolean,
+    val skalBoIUtlandetNeste12Mnd: Boolean? = null, //Settes til null for å unngå default false
     val utenlandsoppholdNeste12Mnd: List<Utenlandsopphold> = listOf()
 )
 
 internal fun Medlemskap.valider(): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
 
-    if(harBoddIUtlandetSiste12Mnd && utenlandsoppholdSiste12Mnd.isEmpty()){
+    if(harBoddIUtlandetSiste12Mnd er null){
+        mangler.add(
+            Violation(
+                parameterName = "harBoddIUtlandetSiste12Mnd",
+                parameterType = ParameterType.ENTITY,
+                reason = "harBoddIUtlandetSiste12Mnd kan ikke være null",
+                invalidValue = harBoddIUtlandetSiste12Mnd
+            )
+        )
+    }
+
+    if(harBoddIUtlandetSiste12Mnd er true && utenlandsoppholdSiste12Mnd.isEmpty()){
         mangler.add(
             Violation(
                 parameterName = "utenlandsoppholdSiste12Mnd",
@@ -39,7 +50,18 @@ internal fun Medlemskap.valider(): MutableSet<Violation> {
         mangler.addAll(utenlandsopphold.valider(relatertFelt = "medlemskap.utenlandsoppholdSiste12Mnd[$index]"))
     }
 
-    if(skalBoIUtlandetNeste12Mnd && utenlandsoppholdNeste12Mnd.isEmpty()){
+    if(skalBoIUtlandetNeste12Mnd er null){
+        mangler.add(
+            Violation(
+                parameterName = "skalBoIUtlandetNeste12Mnd",
+                parameterType = ParameterType.ENTITY,
+                reason = "skalBoIUtlandetNeste12Mnd kan ikke være null",
+                invalidValue = skalBoIUtlandetNeste12Mnd
+            )
+        )
+    }
+
+    if(skalBoIUtlandetNeste12Mnd er true && utenlandsoppholdNeste12Mnd.isEmpty()){
         mangler.add(
             Violation(
                 parameterName = "utenlandsoppholdNeste12Mnd",

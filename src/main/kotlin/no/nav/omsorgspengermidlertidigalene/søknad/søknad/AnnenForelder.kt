@@ -11,7 +11,7 @@ data class AnnenForelder(
     val fnr: String,
     val situasjon: Situasjon,
     val situasjonBeskrivelse: String,
-    val periodeOver6Måneder: Boolean,
+    val periodeOver6Måneder: Boolean? = null, //Settes til null for å unngå default false
     @JsonFormat(pattern = "yyyy-MM-dd") val periodeFraOgMed: LocalDate,
     @JsonFormat(pattern = "yyyy-MM-dd") val periodeTilOgMed: LocalDate
 )
@@ -29,6 +29,12 @@ internal fun AnnenForelder.valider(): MutableSet<Violation> {
 
     //TODO Når ting er avklart så må det validering på "periodeOver6Måneder" og hvilke Situasjoner som krever situasjonsbeskrivelse
     /*
+    when (periodeOver6Måneder) {
+        null -> println("NULL")
+        true -> println("TRUE")
+        else -> println("ELSE")
+    }
+
     when(situasjon){
         Situasjon.SYKDOM, Situasjon.ANNET -> TODO()
         else -> TODO()
@@ -52,6 +58,17 @@ internal fun AnnenForelder.valider(): MutableSet<Violation> {
                 parameterType = ParameterType.ENTITY,
                 reason = "Fødselsnummer på annen forelder må være gyldig norsk identifikator",
                 invalidValue = fnr
+            )
+        )
+    }
+
+    if(periodeOver6Måneder er null){
+        mangler.add(
+            Violation(
+                parameterName = "periodeOver6Måneder",
+                parameterType = ParameterType.ENTITY,
+                reason = "periodeOver6Måneder kan ikke være null",
+                invalidValue = periodeOver6Måneder
             )
         )
     }

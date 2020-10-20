@@ -36,6 +36,17 @@ internal fun Søknad.valider() {
         )
     }
 
+    if(harBekreftetOpplysninger er null){
+        mangler.add(
+            Violation(
+                parameterName = "harBekreftetOpplysninger",
+                parameterType = ParameterType.ENTITY,
+                reason = "harBekreftetOpplysninger kan ikke være null",
+                invalidValue = harBekreftetOpplysninger
+            )
+        )
+    }
+
     if (harBekreftetOpplysninger er false) {
         mangler.add(
             Violation(
@@ -43,6 +54,17 @@ internal fun Søknad.valider() {
                 parameterType = ParameterType.ENTITY,
                 reason = "Opplysningene må bekreftes for å sende inn søknad.",
                 invalidValue = harBekreftetOpplysninger
+            )
+        )
+    }
+
+    if(harForståttRettigheterOgPlikter er null){
+        mangler.add(
+            Violation(
+                parameterName = "harForståttRettigheterOgPlikter",
+                parameterType = ParameterType.ENTITY,
+                reason = "harForståttRettigheterOgPlikter kan ikke være null",
+                invalidValue = harForståttRettigheterOgPlikter
             )
         )
     }
@@ -149,4 +171,4 @@ internal object Mod11 {
     }
 }
 
-internal infix fun Boolean.er(forventetVerdi: Boolean) = this == forventetVerdi
+internal infix fun Boolean?.er(forventetVerdi: Boolean?): Boolean = this == forventetVerdi

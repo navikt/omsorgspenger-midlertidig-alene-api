@@ -16,8 +16,8 @@ data class Søknad(
     val alderAvAlleBarn: List<Int>,
     val medlemskap: Medlemskap,
     val utenlandsoppholdIPerioden: UtenlandsoppholdIPerioden, //TODO Sender frontend null, eller sender de med objektet også er heller felter der false/tom?
-    val harForståttRettigheterOgPlikter: Boolean,
-    val harBekreftetOpplysninger: Boolean
+    val harForståttRettigheterOgPlikter: Boolean? = null, //Settes til null for å unngå default false
+    val harBekreftetOpplysninger: Boolean? = null //Settes til null for å unngå default false
 ) {
     fun tilKomplettSøknad(søker: Søker): KomplettSøknad {
         return KomplettSøknad(
@@ -32,8 +32,8 @@ data class Søknad(
             alderAvAlleBarn = alderAvAlleBarn,
             medlemskap = medlemskap,
             utenlandsoppholdIPerioden = utenlandsoppholdIPerioden,
-            harBekreftetOpplysninger = harBekreftetOpplysninger,
-            harForståttRettigheterOgPlikter = harForståttRettigheterOgPlikter
+            harBekreftetOpplysninger = harBekreftetOpplysninger!!,
+            harForståttRettigheterOgPlikter = harForståttRettigheterOgPlikter!!
         )
     }
 }

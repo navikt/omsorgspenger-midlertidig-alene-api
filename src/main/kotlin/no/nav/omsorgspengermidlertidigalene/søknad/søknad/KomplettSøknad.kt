@@ -15,6 +15,6 @@ data class KomplettSøknad(
     val alderAvAlleBarn: List<Int>,
     val medlemskap: Medlemskap,
     val utenlandsoppholdIPerioden: UtenlandsoppholdIPerioden?,
-    val harForståttRettigheterOgPlikter: Boolean,
-    val harBekreftetOpplysninger: Boolean
+    val harForståttRettigheterOgPlikter: Boolean,//? = null, //Settes til null for å unngå default false
+    val harBekreftetOpplysninger: Boolean//? = null //Settes til null for å unngå default false
 )
