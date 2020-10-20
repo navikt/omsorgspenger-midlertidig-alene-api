@@ -11,6 +11,7 @@ data class AnnenForelder(
     val fnr: String,
     val situasjon: Situasjon,
     val situasjonBeskrivelse: String,
+    val periodeOver6Måneder: Boolean,
     @JsonFormat(pattern = "yyyy-MM-dd") val periodeFraOgMed: LocalDate,
     @JsonFormat(pattern = "yyyy-MM-dd") val periodeTilOgMed: LocalDate
 )
@@ -26,6 +27,13 @@ enum class Situasjon(){
 internal fun AnnenForelder.valider(): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
 
+    //TODO Når ting er avklart så må det validering på "periodeOver6Måneder" og hvilke Situasjoner som krever situasjonsbeskrivelse
+    /*
+    when(situasjon){
+        Situasjon.SYKDOM, Situasjon.ANNET -> TODO()
+        else -> TODO()
+    }
+    */
     if(navn.isNullOrBlank()){
         mangler.add(
             Violation(
