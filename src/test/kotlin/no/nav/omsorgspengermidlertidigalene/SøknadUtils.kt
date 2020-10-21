@@ -46,25 +46,7 @@ object SøknadUtils {
                 )
             )
         ),
-        utenlandsoppholdIPerioden = UtenlandsoppholdIPerioden(
-            skalOppholdeSegIUtlandetIPerioden = true,
-            opphold = listOf(
-                Utenlandsopphold(
-                    fraOgMed = LocalDate.parse("2020-01-11"),
-                    tilOgMed = LocalDate.parse("2020-01-12"),
-                    landnavn = "Brasil",
-                    landkode = "BR"
-                ),
-                Utenlandsopphold(
-                    fraOgMed = LocalDate.parse("2020-01-01"),
-                    tilOgMed = LocalDate.parse("2020-01-10"),
-                    landnavn = "Sverige",
-                    landkode = "SWE"
-                )
-            )
-        ),
         harBekreftetOpplysninger = true,
         harForståttRettigheterOgPlikter = true
     )
-
 }

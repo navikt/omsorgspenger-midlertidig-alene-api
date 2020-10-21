@@ -187,46 +187,6 @@ internal class SøknadValidatorTest {
     }
 
     @Test(expected = Throwblem::class)
-    fun `Feiler dersom utenlandsoppholdIPerioden skalOppholdeSegIUtlandetIPerioden er true med opphold er tom`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            utenlandsoppholdIPerioden = SøknadUtils.gyldigSøknad.utenlandsoppholdIPerioden.copy(
-                skalOppholdeSegIUtlandetIPerioden = true,
-                opphold = listOf()
-                )
-            )
-        søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom utenlandsoppholdIPerioden skalOppholdeSegIUtlandetIPerioden er false med opphold er ikke tom`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            utenlandsoppholdIPerioden = SøknadUtils.gyldigSøknad.utenlandsoppholdIPerioden.copy(
-                skalOppholdeSegIUtlandetIPerioden = false,
-                opphold = listOf(
-                    Utenlandsopphold(
-                        fraOgMed = LocalDate.now(),
-                        tilOgMed = LocalDate.now().minusDays(1),
-                        landnavn = "Sverige",
-                        landkode = "SWE"
-                    )
-                )
-            )
-        )
-        søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom utenlandsoppholdIPerioden skalOppholdeSegIUtlandetIPerioden er null`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            utenlandsoppholdIPerioden = SøknadUtils.gyldigSøknad.utenlandsoppholdIPerioden.copy(
-                skalOppholdeSegIUtlandetIPerioden = null,
-                opphold = listOf()
-            )
-        )
-        søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
     fun `Skal feile dersom arbedissituasjon er tom`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
             arbeidssituasjon = listOf()

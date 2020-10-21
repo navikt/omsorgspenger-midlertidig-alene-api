@@ -93,7 +93,6 @@ internal fun Søknad.valider() {
         }
     }
 
-    mangler.addAll(utenlandsoppholdIPerioden.valider())
     mangler.addAll(annenForelder.valider())
     mangler.addAll(medlemskap.valider())
 

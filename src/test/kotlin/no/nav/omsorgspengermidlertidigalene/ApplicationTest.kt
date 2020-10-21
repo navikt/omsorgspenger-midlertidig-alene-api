@@ -14,7 +14,6 @@ import no.nav.omsorgspengermidlertidigalene.kafka.Topics
 import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Medlemskap
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Utenlandsopphold
-import no.nav.omsorgspengermidlertidigalene.søknad.søknad.UtenlandsoppholdIPerioden
 import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengesoknadApiConfig
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
@@ -360,40 +359,6 @@ class ApplicationTest {
     }
 
     @Test
-    fun `Sende søknad som inneholder ugyldig UtenlandsoppholdIPerioden`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            utenlandsoppholdIPerioden = UtenlandsoppholdIPerioden(
-                skalOppholdeSegIUtlandetIPerioden = true,
-                opphold = listOf()
-            )
-        )
-
-        requestAndAssert(
-            httpMethod = HttpMethod.Post,
-            path = SØKNAD_URL,
-            expectedResponse = """
-                {
-                  "detail": "Requesten inneholder ugyldige paramtere.",
-                  "instance": "about:blank",
-                  "type": "/problem-details/invalid-request-parameters",
-                  "title": "invalid-request-parameters",
-                  "invalid_parameters": [
-                    {
-                      "name": "UtenlandsoppholdIPerioden.skalOppholdeSegIUtlandetIPerioden",
-                      "reason": "Hvis skalOppholdeSegIUtlandetIPerioden er true så kan ikke opphold være en tom liste",
-                      "invalid_value": true,
-                      "type": "entity"
-                    }
-                  ],
-                  "status": 400
-                }
-            """.trimIndent(),
-            expectedCode = HttpStatusCode.BadRequest,
-            requestEntity = søknad.somJson()
-        )
-    }
-
-    @Test
     fun `Sende søknad som inneholder null feil på alle bolske verdier`(){
         val søknadSomJson = """
             {
@@ -442,23 +407,6 @@ class ApplicationTest {
                   }
                 ]
               },
-              "utenlandsoppholdIPerioden": {
-                "skalOppholdeSegIUtlandetIPerioden": null,
-                "opphold": [
-                  {
-                    "fraOgMed": "2020-01-11",
-                    "tilOgMed": "2020-01-12",
-                    "landkode": "BR",
-                    "landnavn": "Brasil"
-                  },
-                  {
-                    "fraOgMed": "2020-01-01",
-                    "tilOgMed": "2020-01-10",
-                    "landkode": "SWE",
-                    "landnavn": "Sverige"
-                  }
-                ]
-              },
               "harForståttRettigheterOgPlikter": null,
               "harBekreftetOpplysninger": null
             }
@@ -483,11 +431,6 @@ class ApplicationTest {
                       "type": "entity",
                       "name": "harForståttRettigheterOgPlikter",
                       "reason": "harForståttRettigheterOgPlikter kan ikke være null"
-                    },
-                    {
-                      "type": "entity",
-                      "name": "skalOppholdeSegIUtlandetIPerioden",
-                      "reason": "skalOppholdeSegIUtlandetIPerioden kan ikke være null"
                     },
                     {
                       "type": "entity",
@@ -556,6 +499,8 @@ class ApplicationTest {
         assertTrue(søknadPlukketFraTopic.has("mottatt"))
         søknadPlukketFraTopic.remove("mottatt") //Fjerner mottatt siden det settes i komplettSøknad
 
+        println(søknadSendtInn)
+        println(søknadPlukketFraTopic)
         JSONAssert.assertEquals(søknadSendtInn, søknadPlukketFraTopic, true)
 
         logger.info("Verifisering OK")
