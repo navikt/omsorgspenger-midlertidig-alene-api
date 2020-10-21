@@ -60,24 +60,24 @@ omsorgspenger-midlertidig-alene-prosessering konsumerer.
 
 **POST @/soknad --> 202 respons ved gyldig søknad. Eventuelt tilbake 400 og liste over valideringsbrudd.**
 
-Validering;
-> * harForståttRettigheterOgPliker og harBekreftetOpplysninger må være true
-> * Alle bolske verdier blir satt til null dersom noe går falt ved deserialisering, for å unngå default false.
->Valideringen sjekker dette og gir feil dersom en bolsk verdi er null.
-> * AnnenForelder:
->  * Navn kan ikke være tom eller kun whitespaces.
->  * fnr må være gyldig.
->  * periodeOver6Måneder må være satt til true eller false
->  * WIP - Situasjon, beskrivelse og fraogmed tilogmed
-> * antallBarn må være minimum 1
-> * alderAvAlleBarn kan ikke inneholde verdi mindre enn 0.
-> * Medlemskap:
->  * harBoddIUtlandetSiste12Mnd må være satt til true eller false
->  * Hvis harBoddIUtlandetSiste12Mnd er true så må utenlandsoppholdSiste12Mnd inneholde elementer.
->  * Hvis harBoddIUtlandetSiste12Mnd er false så må utenlandsoppholdSiste12Mnd være tom.
->  * skalBoIUtlandetNeste12Mnd må være satt til true eller false
->  * Hvis skalBoIUtlandetNeste12Mnd er true så må utenlandsoppholdNeste12Mnd inneholde elementer.
->  * Hvis skalBoIUtlandetNeste12Mnd er false så må utenlandsoppholdNeste12Mnd være tom.
+**Validering**
+* harForståttRettigheterOgPliker og harBekreftetOpplysninger må være true
+* Alle bolske verdier blir satt til null dersom noe går falt ved deserialisering, for å unngå default false.
+Valideringen sjekker dette og gir feil dersom en bolsk verdi er null.
+* AnnenForelder:
+  * Navn kan ikke være tom eller kun whitespaces.
+  * fnr må være gyldig.
+  * periodeOver6Måneder må være satt til true eller false
+  * WIP - Situasjon, beskrivelse og fraogmed tilogmed
+  * antallBarn må være minimum 1
+  * alderAvAlleBarn kan ikke inneholde verdi mindre enn 0.
+* Medlemskap:
+  * harBoddIUtlandetSiste12Mnd må være satt til true eller false
+  * Hvis harBoddIUtlandetSiste12Mnd er true så må utenlandsoppholdSiste12Mnd inneholde elementer.
+  * Hvis harBoddIUtlandetSiste12Mnd er false så må utenlandsoppholdSiste12Mnd være tom.
+  * skalBoIUtlandetNeste12Mnd må være satt til true eller false
+  * Hvis skalBoIUtlandetNeste12Mnd er true så må utenlandsoppholdNeste12Mnd inneholde elementer.
+  * Hvis skalBoIUtlandetNeste12Mnd er false så må utenlandsoppholdNeste12Mnd være tom.
 
 Eksempel json;
 ```
