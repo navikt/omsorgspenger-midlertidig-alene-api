@@ -1,48 +1,48 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "1.4.1.dcb9ddd"
+val dusseldorfKtorVersion = "1.4.1.7d8c082"
 val ktorVersion = ext.get("ktorVersion").toString()
 val mainClass = "no.nav.omsorgspengermidlertidigalene.AppKt"
 val kafkaEmbeddedEnvVersion = "2.2.0"
 val kafkaVersion = "2.3.0" // Alligned med version fra kafka-embedded-env
 
 plugins {
-    kotlin("jvm") version "1.3.50"
-    id("com.github.johnrengelman.shadow") version "5.1.0"
+    kotlin("jvm") version "1.4.10"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 buildscript {
     // Henter ut diverse dependency versjoner, i.e. ktorVersion.
-    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/9c88b788e57939fb6e3d18650393a7e9fb65960f/gradle/dusseldorf-ktor.gradle.kts")
+    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/7d8c082e3fe5f0517f11498a6ab99cc80c9404a4/gradle/dusseldorf-ktor.gradle.kts")
 }
 
 dependencies {
     // Server
-    compile ( "no.nav.helse:dusseldorf-ktor-core:$dusseldorfKtorVersion")
-    compile ( "no.nav.helse:dusseldorf-ktor-jackson:$dusseldorfKtorVersion")
-    compile ( "no.nav.helse:dusseldorf-ktor-metrics:$dusseldorfKtorVersion")
-    compile ( "no.nav.helse:dusseldorf-ktor-health:$dusseldorfKtorVersion")
-    compile ( "no.nav.helse:dusseldorf-ktor-auth:$dusseldorfKtorVersion")
-    compile("io.ktor:ktor-locations:$ktorVersion")
+    implementation ( "no.nav.helse:dusseldorf-ktor-core:$dusseldorfKtorVersion")
+    implementation ( "no.nav.helse:dusseldorf-ktor-jackson:$dusseldorfKtorVersion")
+    implementation ( "no.nav.helse:dusseldorf-ktor-metrics:$dusseldorfKtorVersion")
+    implementation ( "no.nav.helse:dusseldorf-ktor-health:$dusseldorfKtorVersion")
+    implementation ( "no.nav.helse:dusseldorf-ktor-auth:$dusseldorfKtorVersion")
+    implementation("io.ktor:ktor-locations:$ktorVersion")
 
     // Client
-    compile ( "no.nav.helse:dusseldorf-ktor-client:$dusseldorfKtorVersion")
-    compile ( "no.nav.helse:dusseldorf-oauth2-client:$dusseldorfKtorVersion")
-    compile ("io.lettuce:lettuce-core:5.2.1.RELEASE")
+    implementation ( "no.nav.helse:dusseldorf-ktor-client:$dusseldorfKtorVersion")
+    implementation ( "no.nav.helse:dusseldorf-oauth2-client:$dusseldorfKtorVersion")
+    implementation ("io.lettuce:lettuce-core:5.2.1.RELEASE")
     implementation("com.github.fppt:jedis-mock:0.1.16")
 
     // Test
-    testCompile("no.nav.helse:dusseldorf-test-support:$dusseldorfKtorVersion")
-    testCompile("no.nav:kafka-embedded-env:$kafkaEmbeddedEnvVersion")
-    testCompile("io.ktor:ktor-server-test-host:$ktorVersion") {
+    testImplementation("no.nav.helse:dusseldorf-test-support:$dusseldorfKtorVersion")
+    testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedEnvVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty")
     }
 
     // kafka
-    compile("org.apache.kafka:kafka-clients:$kafkaVersion")
+    implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
 
-    testCompile ("org.skyscreamer:jsonassert:1.5.0")
+    testImplementation ("org.skyscreamer:jsonassert:1.5.0")
 }
 
 repositories {
@@ -92,5 +92,5 @@ tasks.withType<ShadowJar> {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "5.6.2"
+    gradleVersion = "6.7"
 }
