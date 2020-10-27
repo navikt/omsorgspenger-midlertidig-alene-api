@@ -51,6 +51,7 @@ spec:
   envFrom:
     - secret: omsorgspenger-midlertidig-alene-api.apigw-apikey
     - secret: omsorgspenger-midlertidig-alene-api.sts-credentials
+    - configmap: loginservice-idporten
   env:
   {{#each env}}
      - name: {{@key}}

@@ -4,8 +4,7 @@ import io.lettuce.core.RedisClient
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class RedisStore constructor(
-        redisClient: RedisClient) {
+class RedisStore constructor(redisClient: RedisClient) {
 
     private val connection = redisClient.connect()
     private val async = connection.async()!!

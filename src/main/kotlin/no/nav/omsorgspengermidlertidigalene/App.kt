@@ -1,6 +1,5 @@
 package no.nav.omsorgspengermidlertidigalene
 
-import com.auth0.jwk.JwkProviderBuilder
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
@@ -9,7 +8,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.jackson.*
@@ -18,8 +16,9 @@ import io.ktor.metrics.micrometer.*
 import io.ktor.routing.*
 import io.ktor.util.*
 import io.prometheus.client.hotspot.DefaultExports
+import no.nav.helse.dusseldorf.ktor.auth.allIssuers
+import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
 import no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthCheck
-import no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthConfig
 import no.nav.helse.dusseldorf.ktor.core.*
 import no.nav.helse.dusseldorf.ktor.health.HealthReporter
 import no.nav.helse.dusseldorf.ktor.health.HealthRoute
@@ -32,7 +31,7 @@ import no.nav.omsorgspengermidlertidigalene.barn.BarnGateway
 import no.nav.omsorgspengermidlertidigalene.barn.BarnService
 import no.nav.omsorgspengermidlertidigalene.barn.barnApis
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
-import no.nav.omsorgspengermidlertidigalene.general.auth.authorizationStatusPages
+import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenStatusPages
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerGateway
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerService
 import no.nav.omsorgspengermidlertidigalene.søker.søkerApis
@@ -42,7 +41,6 @@ import no.nav.omsorgspengermidlertidigalene.søknad.søknadApis
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -82,34 +80,22 @@ fun Application.omsorgpengermidlertidigaleneapi() {
     }
 
     val idTokenProvider = IdTokenProvider(cookieName = configuration.getCookieName())
-    val jwkProvider = JwkProviderBuilder(configuration.getJwksUrl().toURL())
-        .cached(10, 24, TimeUnit.HOURS)
-        .rateLimited(10, 1, TimeUnit.MINUTES)
-        .build()
+    val issuers = configuration.issuers()
 
     install(Authentication) {
-        jwt {
-            realm = appId
-            verifier(jwkProvider, configuration.getIssuer()) {
-                acceptNotBefore(10)
-                acceptIssuedAt(10)
-            }
-            authHeader { call ->
-                idTokenProvider
-                    .getIdToken(call)
-                    .medValidertLevel("Level4")
+        multipleJwtIssuers(
+            issuers = issuers,
+            extractHttpAuthHeader = {call ->
+                idTokenProvider.getIdToken(call)
                     .somHttpAuthHeader()
             }
-            validate { credentials ->
-                return@validate JWTPrincipal(credentials.payload)
-            }
-        }
+        )
     }
 
     install(StatusPages) {
         DefaultStatusPages()
         JacksonStatusPages()
-        authorizationStatusPages()
+        IdTokenStatusPages()
     }
 
     install(Locations)
@@ -140,7 +126,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
             logger.info("Kafka Producer Stoppet.")
         }
 
-        authenticate {
+        authenticate(*issuers.allIssuers())  {
 
             søkerApis(
                 søkerService = søkerService,
@@ -180,7 +166,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
             healthChecks = setOf(
                 søknadKafkaProducer,
                 HttpRequestHealthCheck(mapOf(
-                    configuration.getJwksUrl() to HttpRequestHealthConfig(expectedStatus = HttpStatusCode.OK, includeExpectedStatusEntity = false)
+
                 ))
             )
         )

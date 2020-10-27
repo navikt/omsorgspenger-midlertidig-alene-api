@@ -4,6 +4,7 @@ import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.response.*
+import no.nav.helse.dusseldorf.ktor.auth.ClaimEnforcementFailed
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -13,12 +14,12 @@ import org.slf4j.LoggerFactory
     isn’t authorized to perform the requested operation on the given resource.
  */
 
-private val logger: Logger = LoggerFactory.getLogger("nav.authorizationStatusPages")
+private val logger: Logger = LoggerFactory.getLogger("no.nav.helse.general.auth.AuthorizationStatusPagesKt.IdTokenStatusPages")
 
 
-fun StatusPages.Configuration.authorizationStatusPages() {
+fun StatusPages.Configuration.IdTokenStatusPages() {
 
-    exception<InsufficientAuthenticationLevelException> { cause ->
+    exception<ClaimEnforcementFailed> { cause ->
         call.respond(HttpStatusCode.Forbidden)
         // Kan ha vært logget inn på en annen NAV-tjeneste som ikke krever nivå 4 i forkant
         // og må nå logge inn på nytt. Trenger ikke å logge noe error på dette
