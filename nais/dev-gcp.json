@@ -15,7 +15,7 @@
     "login.microsoftonline.com"
   ],
   "env": {
-    "REDIS_HOST": "omsorgspenger-midlertidig-alene-api-redis.default.svc.nais.local",
+    "REDIS_HOST": "omsorgspenger-midlertidig-alene-api.dusseldorf.svc.cluster.local",
     "CORS_ADDRESSES": "https://www-q0.nav.no",
     "ISSUER": "https://login.microsoftonline.com/d38f25aa-eab8-4c50-9f28-ebf92c1256f2/v2.0/",
     "COOKIE_NAME": "selvbetjening-idtoken",

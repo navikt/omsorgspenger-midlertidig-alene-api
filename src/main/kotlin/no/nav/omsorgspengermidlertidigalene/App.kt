@@ -33,6 +33,11 @@ import no.nav.omsorgspengermidlertidigalene.barn.BarnService
 import no.nav.omsorgspengermidlertidigalene.barn.barnApis
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
 import no.nav.omsorgspengermidlertidigalene.general.auth.authorizationStatusPages
+import no.nav.omsorgspengermidlertidigalene.mellomlagring.MellomlagringService
+import no.nav.omsorgspengermidlertidigalene.mellomlagring.mellomlagringApis
+import no.nav.omsorgspengermidlertidigalene.redis.RedisConfig
+import no.nav.omsorgspengermidlertidigalene.redis.RedisConfigurationProperties
+import no.nav.omsorgspengermidlertidigalene.redis.RedisStore
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerGateway
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerService
 import no.nav.omsorgspengermidlertidigalene.søker.søkerApis
@@ -155,7 +160,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
             )
 
             //TODO: Fix redis når dette er tilgjengelig i GCP
-/*            mellomlagringApis(
+            mellomlagringApis(
                 mellomlagringService = MellomlagringService(
                     RedisStore(
                         RedisConfig(
@@ -165,7 +170,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
                         ).redisClient(configuration)
                     ), configuration.getStoragePassphrase()),
                 idTokenProvider = idTokenProvider
-            )*/
+            )
 
             søknadApis(
                 idTokenProvider = idTokenProvider,
