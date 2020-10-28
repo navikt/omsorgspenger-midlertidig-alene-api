@@ -13,7 +13,7 @@ data class Søknad(
     val arbeidssituasjon: List<Arbeidssituasjon>,
     val annenForelder: AnnenForelder,
     val antallBarn: Int,
-    val alderAvAlleBarn: List<Int>,
+    val fødselsårBarn: List<Int>,
     val medlemskap: Medlemskap,
     val harForståttRettigheterOgPlikter: Boolean? = null, //Settes til null for å unngå default false
     val harBekreftetOpplysninger: Boolean? = null //Settes til null for å unngå default false
@@ -28,7 +28,7 @@ data class Søknad(
             arbeidssituasjon = arbeidssituasjon,
             annenForelder = annenForelder,
             antallBarn = antallBarn,
-            alderAvAlleBarn = alderAvAlleBarn,
+            fødselsårBarn = fødselsårBarn,
             medlemskap = medlemskap,
             harBekreftetOpplysninger = harBekreftetOpplysninger!!,
             harForståttRettigheterOgPlikter = harForståttRettigheterOgPlikter!!

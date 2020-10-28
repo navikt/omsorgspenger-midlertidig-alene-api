@@ -80,11 +80,11 @@ internal fun Søknad.valider() {
         )
     }
 
-    alderAvAlleBarn.forEachIndexed{index: Int, alder: Int ->
+    fødselsårBarn.forEachIndexed{ index: Int, alder: Int ->
         if(alder < 0){
             mangler.add(
                 Violation(
-                    parameterName = "alderAvAlleBarn[$index]",
+                    parameterName = "fødselsårBarn[$index]",
                     parameterType = ParameterType.ENTITY,
                     reason = "Alder på barn kan ikke være mindre enn 0",
                     invalidValue = alder

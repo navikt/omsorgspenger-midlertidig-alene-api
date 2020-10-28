@@ -70,7 +70,7 @@ Valideringen sjekker dette og gir feil dersom en bolsk verdi er null.
   * periodeOver6Måneder må være satt til true eller false
   * WIP - Situasjon, beskrivelse og fraogmed tilogmed
   * antallBarn må være minimum 1
-  * alderAvAlleBarn kan ikke inneholde verdi mindre enn 0.
+  * fødselsårBarn kan ikke inneholde verdi mindre enn 0.
 * Medlemskap:
   * harBoddIUtlandetSiste12Mnd må være satt til true eller false
   * Hvis harBoddIUtlandetSiste12Mnd er true så må utenlandsoppholdSiste12Mnd inneholde elementer.
@@ -97,7 +97,7 @@ Eksempel json;
     "periodeTilOgMed": "2020-10-01"
   },
   "antallBarn": 2,
-  "alderAvAlleBarn": [
+  "fødselsårBarn": [
     5,
     3
   ],

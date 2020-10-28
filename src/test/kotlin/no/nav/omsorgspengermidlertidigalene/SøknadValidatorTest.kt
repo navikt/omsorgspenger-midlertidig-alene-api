@@ -90,7 +90,7 @@ internal class SøknadValidatorTest {
     @Test(expected = Throwblem::class)
     fun `Feiler dersom alder på barn er -1`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
-            alderAvAlleBarn = listOf(1,2,-1)
+            fødselsårBarn = listOf(1,2,-1)
         )
         søknad.valider()
     }

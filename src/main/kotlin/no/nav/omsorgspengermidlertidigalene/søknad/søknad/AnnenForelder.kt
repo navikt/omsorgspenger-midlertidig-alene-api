@@ -39,6 +39,10 @@ internal fun AnnenForelder.valider(): MutableSet<Violation> {
         else -> TODO()
     }
     */
+
+    when(situasjon){
+        Situasjon.SYKDOM -> TODO()
+    }
     if(navn.isNullOrBlank()){
         mangler.add(
             Violation(

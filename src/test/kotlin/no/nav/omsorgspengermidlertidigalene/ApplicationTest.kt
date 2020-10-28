@@ -377,7 +377,7 @@ class ApplicationTest {
                 "periodeTilOgMed": "2020-10-01"
               },
               "antallBarn": 2,
-              "alderAvAlleBarn": [
+              "fødselsårBarn": [
                 5,
                 3
               ],
