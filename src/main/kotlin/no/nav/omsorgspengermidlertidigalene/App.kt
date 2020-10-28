@@ -59,6 +59,8 @@ fun Application.omsorgpengermidlertidigaleneapi() {
     logProxyProperties()
     DefaultExports.initialize()
 
+    System.setProperty("dusseldorf.ktor.serializeProblemDetailsWithContentNegotiation", "true")
+
     val configuration = Configuration(environment.config)
     val apiGatewayApiKey = configuration.getApiGatewayApiKey()
 

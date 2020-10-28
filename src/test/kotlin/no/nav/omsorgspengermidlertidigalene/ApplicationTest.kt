@@ -425,27 +425,32 @@ class ApplicationTest {
                     {
                       "type": "entity",
                       "name": "harBekreftetOpplysninger",
-                      "reason": "harBekreftetOpplysninger kan ikke være null"
+                      "reason": "harBekreftetOpplysninger kan ikke være null",
+                      "invalid_value": null
                     },
                     {
                       "type": "entity",
                       "name": "harForståttRettigheterOgPlikter",
-                      "reason": "harForståttRettigheterOgPlikter kan ikke være null"
+                      "reason": "harForståttRettigheterOgPlikter kan ikke være null",
+                      "invalid_value": null
                     },
                     {
                       "type": "entity",
                       "name": "periodeOver6Måneder",
-                      "reason": "periodeOver6Måneder kan ikke være null"
+                      "reason": "periodeOver6Måneder kan ikke være null",
+                      "invalid_value": null
                     },
                     {
                       "type": "entity",
                       "name": "harBoddIUtlandetSiste12Mnd",
-                      "reason": "harBoddIUtlandetSiste12Mnd kan ikke være null"
+                      "reason": "harBoddIUtlandetSiste12Mnd kan ikke være null",
+                      "invalid_value": null
                     },
                     {
                       "type": "entity",
                       "name": "skalBoIUtlandetNeste12Mnd",
-                      "reason": "skalBoIUtlandetNeste12Mnd kan ikke være null"
+                      "reason": "skalBoIUtlandetNeste12Mnd kan ikke være null",
+                      "invalid_value": null
                     }
                   ],
                   "status": 400
