@@ -20,3 +20,7 @@ spec:
       memory: 256Mi
   service:
     port: 6379
+  accessPolicy:
+    inbound:
+      rules:
+        - application: omsorgspenger-midlertidig-alene-api
