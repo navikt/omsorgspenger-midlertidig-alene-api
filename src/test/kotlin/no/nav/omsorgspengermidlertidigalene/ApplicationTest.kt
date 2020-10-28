@@ -436,12 +436,6 @@ class ApplicationTest {
                     },
                     {
                       "type": "entity",
-                      "name": "periodeOver6Måneder",
-                      "reason": "periodeOver6Måneder kan ikke være null",
-                      "invalid_value": null
-                    },
-                    {
-                      "type": "entity",
                       "name": "harBoddIUtlandetSiste12Mnd",
                       "reason": "harBoddIUtlandetSiste12Mnd kan ikke være null",
                       "invalid_value": null
