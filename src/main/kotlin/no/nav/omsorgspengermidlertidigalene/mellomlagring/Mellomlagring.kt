@@ -6,6 +6,7 @@ import io.ktor.locations.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.Route
+import no.nav.omsorgspengermidlertidigalene.felles.MELLOMLAGRING_URL
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -18,7 +19,7 @@ fun Route.mellomlagringApis(
     idTokenProvider: IdTokenProvider
 ) {
 
-    @Location("/mellomlagring")
+    @Location(MELLOMLAGRING_URL)
     class mellomlagring
 
     post { _: mellomlagring ->
