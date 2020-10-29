@@ -98,8 +98,8 @@ Eksempel json;
   },
   "antallBarn": 2,
   "fødselsårBarn": [
-    5,
-    3
+    2005,
+    2003
   ],
   "medlemskap": {
     "harBoddIUtlandetSiste12Mnd": true,
