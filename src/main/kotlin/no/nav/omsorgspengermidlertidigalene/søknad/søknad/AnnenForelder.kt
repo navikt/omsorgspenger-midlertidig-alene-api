@@ -1,6 +1,5 @@
 package no.nav.omsorgspengermidlertidigalene.søknad.søknad
 
-import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonFormat
 import no.nav.helse.dusseldorf.ktor.core.ParameterType
 import no.nav.helse.dusseldorf.ktor.core.Violation
@@ -10,39 +9,16 @@ data class AnnenForelder(
     val navn: String,
     val fnr: String,
     val situasjon: Situasjon,
-    val situasjonBeskrivelse: String?,
+    //val vetLengdePåInnleggelseperioden: Boolean? = null, //Settes til null for å unngå default false //TODO Burde legges til for å gjøre validering på sitausjon enklere
+    val situasjonBeskrivelse: String? = null,
     val periodeOver6Måneder: Boolean? = null, //Settes til null for å unngå default false
-    @JsonFormat(pattern = "yyyy-MM-dd") val periodeFraOgMed: LocalDate?,
-    @JsonFormat(pattern = "yyyy-MM-dd") val periodeTilOgMed: LocalDate?
+    @JsonFormat(pattern = "yyyy-MM-dd") val periodeFraOgMed: LocalDate? = null,
+    @JsonFormat(pattern = "yyyy-MM-dd") val periodeTilOgMed: LocalDate? = null
 )
-
-enum class Situasjon(){
-    @JsonAlias("innlagtIHelseinstitusjon") INNLAGT_I_HELSEINSTITUSJON,
-    @JsonAlias("utøverVerneplikt") UTØVER_VERNEPLIKT,
-    @JsonAlias("fengsel") FENGSEL,
-    @JsonAlias("sykdom") SYKDOM,
-    @JsonAlias("annet") ANNET
-}
 
 internal fun AnnenForelder.valider(): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
-    //TODO Når ting er avklart så må det validering på "periodeOver6Måneder" og hvilke Situasjoner som krever situasjonsbeskrivelse, og frogmedTilogmed
-    /*
-    when (periodeOver6Måneder) {
-        null -> println("NULL")
-        true -> println("TRUE")
-        else -> println("ELSE")
-    }
 
-    when(situasjon){
-        Situasjon.SYKDOM, Situasjon.ANNET -> TODO()
-        else -> TODO()
-    }
-    */
-
-    when(situasjon){
-        Situasjon.SYKDOM -> TODO()
-    }
     if(navn.isNullOrBlank()){
         mangler.add(
             Violation(
@@ -64,6 +40,8 @@ internal fun AnnenForelder.valider(): MutableSet<Violation> {
             )
         )
     }
+
+    mangler.addAll(validerSituasjon())
 
     return mangler
 }

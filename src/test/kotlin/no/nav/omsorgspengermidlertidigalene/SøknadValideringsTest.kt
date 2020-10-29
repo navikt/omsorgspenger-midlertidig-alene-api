@@ -9,7 +9,7 @@ import java.time.LocalDate
 import kotlin.test.assertTrue
 
 
-internal class SøknadValidatorTest {
+internal class SøknadValideringsTest {
 
     companion object {
         private val gyldigFødselsnummerA = "02119970078"
@@ -193,4 +193,5 @@ internal class SøknadValidatorTest {
         )
         søknad.valider()
     }
+
 }

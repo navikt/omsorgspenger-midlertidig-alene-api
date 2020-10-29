@@ -12,7 +12,9 @@ import no.nav.helse.getAuthCookie
 import no.nav.omsorgspengermidlertidigalene.felles.*
 import no.nav.omsorgspengermidlertidigalene.kafka.Topics
 import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.AnnenForelder
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Medlemskap
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Situasjon
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Utenlandsopphold
 import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengesoknadApiConfig
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
@@ -352,6 +354,61 @@ class ApplicationTest {
                   ],
                   "status": 400
                 }
+            """.trimIndent(),
+            expectedCode = HttpStatusCode.BadRequest,
+            requestEntity = søknad.somJson()
+        )
+    }
+
+    @Test
+    fun `Sende søknad som inneholder annenForelder som er ugyldig`(){
+        val søknad = SøknadUtils.gyldigSøknad.copy(
+            annenForelder = AnnenForelder(
+                navn = "",
+                fnr = "0-0",
+                situasjon = Situasjon.SYKDOM,
+                situasjonBeskrivelse = " ",
+                periodeOver6Måneder = false
+            )
+        )
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Post,
+            path = SØKNAD_URL,
+            expectedResponse = """
+            {
+              "type": "/problem-details/invalid-request-parameters",
+              "title": "invalid-request-parameters",
+              "status": 400,
+              "detail": "Requesten inneholder ugyldige paramtere.",
+              "instance": "about:blank",
+              "invalid_parameters": [
+                    {
+                  "type": "entity",
+                  "name": "AnnenForelder.navn",
+                  "reason": "Navn på annen forelder kan ikke være null eller tom eller kun white spaces",
+                  "invalid_value": ""
+                },
+                {
+                  "type": "entity",
+                  "name": "AnnenForelder.fnr",
+                  "reason": "Fødselsnummer på annen forelder må være gyldig norsk identifikator",
+                  "invalid_value": "0-0"
+                },
+                {
+                  "type": "entity",
+                  "name": "AnnenForelder.situasjonBeskrivelse",
+                  "reason": "Situasjonsbeskrivelse på annenForelder kan ikke være null eller tom eller kun white spaces ved SYKDOM eller ANNET",
+                  "invalid_value": " "
+                },
+                {
+                  "type": "entity",
+                  "name": "AnnenForelder.periodeOver6Måneder",
+                  "reason": "periodeOver6Måneder kan ikke være false",
+                  "invalid_value": false
+                }
+              ]
+            }
             """.trimIndent(),
             expectedCode = HttpStatusCode.BadRequest,
             requestEntity = søknad.somJson()
