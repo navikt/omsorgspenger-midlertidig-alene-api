@@ -5,6 +5,7 @@ import no.nav.helse.dusseldorf.ktor.health.Healthy
 import no.nav.helse.dusseldorf.ktor.health.Result
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.omsorgspengermidlertidigalene.felles.Metadata
+import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
 import no.nav.omsorgspengermidlertidigalene.felles.somJson
 import no.nav.omsorgspengermidlertidigalene.kafka.KafkaConfig
 import no.nav.omsorgspengermidlertidigalene.kafka.TopicEntry
@@ -53,7 +54,7 @@ class SøknadKafkaProducer(
             )
         ).get()
 
-        logger.info("Søknad med ID = ${søknad.søknadId} sendt til topic '${TOPIC_USE.name}' med offset '${recordMetaData.offset()}' til partition '${recordMetaData.partition()}'")
+        logger.info(formaterStatuslogging(søknad.søknadId, "sendes til topic ${TOPIC_USE.name} med offset '${recordMetaData.offset()}' til partition '${recordMetaData.partition()}'"))
     }
 
     internal fun stop() = producer.close()

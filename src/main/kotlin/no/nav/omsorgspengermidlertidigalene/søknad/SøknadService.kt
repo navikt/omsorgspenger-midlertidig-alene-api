@@ -1,6 +1,7 @@
 package no.nav.omsorgspengermidlertidigalene.søknad
 
 import no.nav.omsorgspengermidlertidigalene.felles.Metadata
+import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
 import no.nav.omsorgspengermidlertidigalene.general.CallId
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdToken
 import no.nav.omsorgspengermidlertidigalene.søker.Søker
@@ -26,7 +27,7 @@ class SøknadService(
         idToken: IdToken,
         callId: CallId
     ) {
-        logger.info("Registrerer søknad med ID = {}", søknad.søknadId)
+        logger.info(formaterStatuslogging(søknad.søknadId, "registreres"))
 
         logger.trace("Henter søker")
         val søker: Søker = søkerService.getSøker(idToken = idToken, callId = callId)

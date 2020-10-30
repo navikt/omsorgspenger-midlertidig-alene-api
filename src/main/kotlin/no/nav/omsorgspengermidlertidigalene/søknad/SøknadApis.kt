@@ -8,6 +8,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import no.nav.omsorgspengermidlertidigalene.felles.SØKNAD_URL
 import no.nav.omsorgspengermidlertidigalene.felles.VALIDERING_URL
+import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
 import no.nav.omsorgspengermidlertidigalene.general.getCallId
 import no.nav.omsorgspengermidlertidigalene.general.metadata
@@ -37,6 +38,8 @@ fun Route.søknadApis(
         logger.trace("Validerer søknad")
         søknad.valider()
         logger.trace("Validering OK.")
+
+        logger.info(formaterStatuslogging(søknad.søknadId, "validert OK"))
 
         søknadService.registrer(
             søknad = søknad,
