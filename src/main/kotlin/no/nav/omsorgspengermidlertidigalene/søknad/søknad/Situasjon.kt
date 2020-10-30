@@ -15,27 +15,14 @@ enum class Situasjon {
 internal fun AnnenForelder.validerSituasjon(): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
 
-    var validerSituasjonBeskrivelse = false
-    var validerPeriodeOver6Måneder = false
-    var validerDato = false
-    var validerInnlagtIHelseinstitusjon = false
-
-    when (situasjon) {
-        Situasjon.INNLAGT_I_HELSEINSTITUSJON -> validerInnlagtIHelseinstitusjon = true
-        Situasjon.UTØVER_VERNEPLIKT, Situasjon.FENGSEL -> validerDato = true
+    when(situasjon){
+        Situasjon.INNLAGT_I_HELSEINSTITUSJON -> mangler.addAll(validerInnlagtIHelseinstitusjon())
+        Situasjon.UTØVER_VERNEPLIKT, Situasjon.FENGSEL -> mangler.addAll(validerDato())
         Situasjon.SYKDOM, Situasjon.ANNET -> {
-            validerSituasjonBeskrivelse = true
-            validerPeriodeOver6Måneder = true
+            mangler.addAll(validerSituasjonBeskrivelse())
+            mangler.addAll(validerPeriodeOver6Måneder())
         }
     }
-
-    if(validerSituasjonBeskrivelse) mangler.addAll(validerSituasjonBeskrivelse())
-
-    if(validerPeriodeOver6Måneder) mangler.addAll(validerPeriodeOver6Måneder())
-
-    if(validerDato) mangler.addAll(validerDato())
-
-    if(validerInnlagtIHelseinstitusjon) mangler.addAll(validerInnlagtIHelseinstitusjon())
 
     return mangler
 }
