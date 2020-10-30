@@ -27,7 +27,7 @@ internal fun AnnenForelder.validerSituasjon(): MutableSet<Violation> {
     return mangler
 }
 
-private fun AnnenForelder.validerPeriodeOver6Måneder(): MutableSet<Violation> {
+private fun AnnenForelder.validerPeriodeOver6Måneder(kanVæreFalse: Boolean = false): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
     if(periodeOver6Måneder er null){
         mangler.add(
@@ -39,16 +39,17 @@ private fun AnnenForelder.validerPeriodeOver6Måneder(): MutableSet<Violation> {
             )
         )
     }
-
-    if(periodeOver6Måneder er false){
-        mangler.add(
-            Violation(
-                parameterName = "AnnenForelder.periodeOver6Måneder",
-                parameterType = ParameterType.ENTITY,
-                reason = "periodeOver6Måneder kan ikke være false",
-                invalidValue = periodeOver6Måneder
+    if(!kanVæreFalse){
+        if(periodeOver6Måneder er false){
+            mangler.add(
+                Violation(
+                    parameterName = "AnnenForelder.periodeOver6Måneder",
+                    parameterType = ParameterType.ENTITY,
+                    reason = "periodeOver6Måneder kan ikke være false",
+                    invalidValue = periodeOver6Måneder
+                )
             )
-        )
+        }
     }
 
     return mangler
@@ -126,7 +127,7 @@ private fun AnnenForelder.validerInnlagtIHelseinstitusjon(): MutableSet<Violatio
         )
     } else {
         if(vetLengdePåInnleggelseperioden) mangler.addAll(validerDato())
-        else mangler.addAll(validerPeriodeOver6Måneder())
+        else mangler.addAll(validerPeriodeOver6Måneder(kanVæreFalse = true))
     }
 
     return mangler

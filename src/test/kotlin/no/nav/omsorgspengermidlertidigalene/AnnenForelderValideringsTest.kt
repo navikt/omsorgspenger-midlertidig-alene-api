@@ -78,24 +78,24 @@ internal class AnnenForelderValidatorTest {
     }
 
     @Test
-    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom vetLengdePåInnleggelseperioden null`(){
-        val annenForelder = AnnenForelder(
-            navn = "Kjell",
-            fnr = gyldigFødselsnummer,
-            situasjon = Situasjon.INNLAGT_I_HELSEINSTITUSJON
-        )
-
-        annenForelder.valider().assertAntallMangler(1)
-    }
-
-    @Test
-    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom vetLengdePåInnleggelseperioden er false og dersom periodeOver6Måneder er false`(){
+    fun `Gyldig AnnenForelder med situasjon INNLAGT_I_HELSEINSTITUSJON hvor vetLengdePåInnleggelseperioden er false og dersom periodeOver6Måneder er false`(){
         val annenForelder = AnnenForelder(
             navn = "Kjell",
             fnr = gyldigFødselsnummer,
             situasjon = Situasjon.INNLAGT_I_HELSEINSTITUSJON,
             vetLengdePåInnleggelseperioden = false,
             periodeOver6Måneder = false
+        )
+
+        annenForelder.valider().assertAntallMangler(0)
+    }
+
+    @Test
+    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom vetLengdePåInnleggelseperioden null`(){
+        val annenForelder = AnnenForelder(
+            navn = "Kjell",
+            fnr = gyldigFødselsnummer,
+            situasjon = Situasjon.INNLAGT_I_HELSEINSTITUSJON
         )
 
         annenForelder.valider().assertAntallMangler(1)
