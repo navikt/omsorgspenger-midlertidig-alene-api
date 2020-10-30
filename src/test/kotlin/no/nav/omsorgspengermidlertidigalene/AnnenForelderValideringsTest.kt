@@ -56,6 +56,7 @@ internal class AnnenForelderValidatorTest {
             navn = "Kjell",
             fnr = gyldigFødselsnummer,
             situasjon = Situasjon.INNLAGT_I_HELSEINSTITUSJON,
+            vetLengdePåInnleggelseperioden = false,
             periodeOver6Måneder = true
         )
 
@@ -68,6 +69,7 @@ internal class AnnenForelderValidatorTest {
             navn = "Kjell",
             fnr = gyldigFødselsnummer,
             situasjon = Situasjon.INNLAGT_I_HELSEINSTITUSJON,
+            vetLengdePåInnleggelseperioden = true,
             periodeFraOgMed = LocalDate.parse("2020-01-01"),
             periodeTilOgMed = LocalDate.parse("2020-07-01")
         )
@@ -76,7 +78,7 @@ internal class AnnenForelderValidatorTest {
     }
 
     @Test
-    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom periodeOver6Måneder, periodeFraOgMed og periodeTilOgMed er null`(){
+    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom vetLengdePåInnleggelseperioden null`(){
         val annenForelder = AnnenForelder(
             navn = "Kjell",
             fnr = gyldigFødselsnummer,
@@ -87,11 +89,12 @@ internal class AnnenForelderValidatorTest {
     }
 
     @Test
-    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom periodeOver6Måneder er false`(){
+    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom vetLengdePåInnleggelseperioden er false og dersom periodeOver6Måneder er false`(){
         val annenForelder = AnnenForelder(
             navn = "Kjell",
             fnr = gyldigFødselsnummer,
             situasjon = Situasjon.INNLAGT_I_HELSEINSTITUSJON,
+            vetLengdePåInnleggelseperioden = false,
             periodeOver6Måneder = false
         )
 
@@ -99,11 +102,12 @@ internal class AnnenForelderValidatorTest {
     }
 
     @Test
-    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom periodeTilOgMed er null`(){
+    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom vetLengdePåInnleggelseperioden er true og periodeTilOgMed er null`(){
         val annenForelder = AnnenForelder(
             navn = "Kjell",
             fnr = gyldigFødselsnummer,
             situasjon = Situasjon.INNLAGT_I_HELSEINSTITUSJON,
+            vetLengdePåInnleggelseperioden = true,
             periodeFraOgMed = LocalDate.parse("2020-01-01"),
             periodeTilOgMed = null
         )
@@ -112,11 +116,12 @@ internal class AnnenForelderValidatorTest {
     }
 
     @Test
-    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom periodeFraOgMed er null`(){
+    fun `Ved situasjon INNLAGT_I_HELSEINSTITUSJON skal det gi feil dersom vetLengdePåInnleggelseperioden er true og periodeFraOgMed er null`(){
         val annenForelder = AnnenForelder(
             navn = "Kjell",
             fnr = gyldigFødselsnummer,
             situasjon = Situasjon.INNLAGT_I_HELSEINSTITUSJON,
+            vetLengdePåInnleggelseperioden = true,
             periodeFraOgMed = null,
             periodeTilOgMed = LocalDate.parse("2020-01-01")
         )
@@ -130,6 +135,7 @@ internal class AnnenForelderValidatorTest {
             navn = "Kjell",
             fnr = gyldigFødselsnummer,
             situasjon = Situasjon.INNLAGT_I_HELSEINSTITUSJON,
+            vetLengdePåInnleggelseperioden = true,
             periodeFraOgMed = LocalDate.parse("2020-01-01"),
             periodeTilOgMed = LocalDate.parse("2020-01-01").minusDays(1)
         )
@@ -279,5 +285,6 @@ internal class AnnenForelderValidatorTest {
 }
 
 private fun MutableSet<Violation>.assertAntallMangler(forventetAntallFeil: Int) {
+    println(this)
     assertEquals(forventetAntallFeil, this.size)
 }

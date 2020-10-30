@@ -19,10 +19,10 @@ internal fun AnnenForelder.validerSituasjon(): MutableSet<Violation> {
     var validerBeskrivelse = false
     var validerPeriodeOver6Måneder = false
     var validerDato = false
-    var validerDatoEllerOver6Måneder = false
+    var validerInnlagtIHelseinstitusjon = false
 
     when (situasjon) {
-        Situasjon.INNLAGT_I_HELSEINSTITUSJON -> validerDatoEllerOver6Måneder = true
+        Situasjon.INNLAGT_I_HELSEINSTITUSJON -> validerInnlagtIHelseinstitusjon = true
         Situasjon.UTØVER_VERNEPLIKT, Situasjon.FENGSEL -> validerDato = true
         Situasjon.SYKDOM, Situasjon.ANNET -> {
             validerBeskrivelse = true
@@ -36,20 +36,7 @@ internal fun AnnenForelder.validerSituasjon(): MutableSet<Violation> {
 
     if(validerDato) mangler.addAll(validerDato(periodeFraOgMed, periodeTilOgMed))
 
-    if(validerDatoEllerOver6Måneder){
-        if(periodeOver6Måneder er null && periodeFraOgMed == null && periodeTilOgMed == null){
-            mangler.add(
-                Violation(
-                    parameterName = "annenForelder.periodeOver6Måneder",
-                    parameterType = ParameterType.ENTITY,
-                    reason = "periodeOver6Måneder ELLER periodeFraOgMed og periodeTilOgMed må settes",
-                    invalidValue = periodeOver6Måneder
-                )
-            )
-        } else if(periodeOver6Måneder er null) {
-            mangler.addAll(validerDato(periodeFraOgMed = periodeFraOgMed, periodeTilOgMed = periodeTilOgMed))
-        } else mangler.addAll(validerPeriodeOver6Måneder(periodeOver6Måneder))
-    }
+    if(validerInnlagtIHelseinstitusjon) mangler.addAll(validerInnlagtIHelseinstitusjon(this))
 
     return mangler
 }
@@ -130,10 +117,32 @@ private fun validerSituasjonBeskrivelse(situasjonBeskrivelse: String?): MutableS
             Violation(
                 parameterName = "AnnenForelder.situasjonBeskrivelse",
                 parameterType = ParameterType.ENTITY,
-                reason = "Situasjonsbeskrivelse på annenForelder kan ikke være null eller tom eller kun white spaces ved SYKDOM eller ANNET",
+                reason = "Situasjonsbeskrivelse på annenForelder kan ikke være null, tom eller kun white spaces ved SYKDOM eller ANNET",
                 invalidValue = situasjonBeskrivelse
             )
         )
+    }
+
+    return mangler
+}
+
+private fun validerInnlagtIHelseinstitusjon(annenForelder: AnnenForelder): MutableSet<Violation>{
+    val mangler: MutableSet<Violation> = mutableSetOf()
+
+    if(annenForelder.vetLengdePåInnleggelseperioden er null){
+        mangler.add(
+            Violation(
+                parameterName = "AnnenForelder.vetLengdePåInnleggelseperioden",
+                parameterType = ParameterType.ENTITY,
+                reason = "vetLengdePåInnleggelseperioden kan ikke være null",
+                invalidValue = annenForelder.vetLengdePåInnleggelseperioden
+            )
+        )
+    }
+
+    if(annenForelder.vetLengdePåInnleggelseperioden != null){
+        if(annenForelder.vetLengdePåInnleggelseperioden) mangler.addAll(validerDato(annenForelder.periodeFraOgMed, annenForelder.periodeTilOgMed))
+        else mangler.addAll(validerPeriodeOver6Måneder(annenForelder.periodeOver6Måneder))
     }
 
     return mangler

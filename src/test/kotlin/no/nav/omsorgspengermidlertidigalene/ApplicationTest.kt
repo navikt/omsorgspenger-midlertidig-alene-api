@@ -386,7 +386,7 @@ class ApplicationTest {
                     {
                   "type": "entity",
                   "name": "AnnenForelder.navn",
-                  "reason": "Navn på annen forelder kan ikke være null eller tom eller kun white spaces",
+                  "reason": "Navn på annen forelder kan ikke være null, tom eller kun white spaces",
                   "invalid_value": ""
                 },
                 {
@@ -398,7 +398,7 @@ class ApplicationTest {
                 {
                   "type": "entity",
                   "name": "AnnenForelder.situasjonBeskrivelse",
-                  "reason": "Situasjonsbeskrivelse på annenForelder kan ikke være null eller tom eller kun white spaces ved SYKDOM eller ANNET",
+                  "reason": "Situasjonsbeskrivelse på annenForelder kan ikke være null, tom eller kun white spaces ved SYKDOM eller ANNET",
                   "invalid_value": " "
                 },
                 {

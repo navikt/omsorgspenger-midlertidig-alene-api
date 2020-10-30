@@ -9,9 +9,9 @@ data class AnnenForelder(
     val navn: String,
     val fnr: String,
     val situasjon: Situasjon,
-    //val vetLengdePåInnleggelseperioden: Boolean? = null, //Settes til null for å unngå default false //TODO Burde legges til for å gjøre validering på sitausjon enklere
     val situasjonBeskrivelse: String? = null,
     val periodeOver6Måneder: Boolean? = null, //Settes til null for å unngå default false
+    val vetLengdePåInnleggelseperioden: Boolean? = null,
     @JsonFormat(pattern = "yyyy-MM-dd") val periodeFraOgMed: LocalDate? = null,
     @JsonFormat(pattern = "yyyy-MM-dd") val periodeTilOgMed: LocalDate? = null
 )
@@ -24,7 +24,7 @@ internal fun AnnenForelder.valider(): MutableSet<Violation> {
             Violation(
                 parameterName = "AnnenForelder.navn",
                 parameterType = ParameterType.ENTITY,
-                reason = "Navn på annen forelder kan ikke være null eller tom eller kun white spaces",
+                reason = "Navn på annen forelder kan ikke være null, tom eller kun white spaces",
                 invalidValue = navn
             )
         )
