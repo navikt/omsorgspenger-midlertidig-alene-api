@@ -3,7 +3,6 @@ package no.nav.omsorgspengermidlertidigalene.søknad.søknad
 import com.fasterxml.jackson.annotation.JsonAlias
 import no.nav.helse.dusseldorf.ktor.core.ParameterType
 import no.nav.helse.dusseldorf.ktor.core.Violation
-import java.time.LocalDate
 
 enum class Situasjon {
     @JsonAlias("innlagtIHelseinstitusjon") INNLAGT_I_HELSEINSTITUSJON,
@@ -16,7 +15,7 @@ enum class Situasjon {
 internal fun AnnenForelder.validerSituasjon(): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
 
-    var validerBeskrivelse = false
+    var validerSituasjonBeskrivelse = false
     var validerPeriodeOver6Måneder = false
     var validerDato = false
     var validerInnlagtIHelseinstitusjon = false
@@ -25,23 +24,23 @@ internal fun AnnenForelder.validerSituasjon(): MutableSet<Violation> {
         Situasjon.INNLAGT_I_HELSEINSTITUSJON -> validerInnlagtIHelseinstitusjon = true
         Situasjon.UTØVER_VERNEPLIKT, Situasjon.FENGSEL -> validerDato = true
         Situasjon.SYKDOM, Situasjon.ANNET -> {
-            validerBeskrivelse = true
+            validerSituasjonBeskrivelse = true
             validerPeriodeOver6Måneder = true
         }
     }
 
-    if(validerBeskrivelse) mangler.addAll(validerSituasjonBeskrivelse(situasjonBeskrivelse))
+    if(validerSituasjonBeskrivelse) mangler.addAll(validerSituasjonBeskrivelse())
 
-    if(validerPeriodeOver6Måneder) mangler.addAll(validerPeriodeOver6Måneder(periodeOver6Måneder))
+    if(validerPeriodeOver6Måneder) mangler.addAll(validerPeriodeOver6Måneder())
 
-    if(validerDato) mangler.addAll(validerDato(periodeFraOgMed, periodeTilOgMed))
+    if(validerDato) mangler.addAll(validerDato())
 
-    if(validerInnlagtIHelseinstitusjon) mangler.addAll(validerInnlagtIHelseinstitusjon(this))
+    if(validerInnlagtIHelseinstitusjon) mangler.addAll(validerInnlagtIHelseinstitusjon())
 
     return mangler
 }
 
-private fun validerPeriodeOver6Måneder(periodeOver6Måneder: Boolean?): MutableSet<Violation> {
+private fun AnnenForelder.validerPeriodeOver6Måneder(): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
     if(periodeOver6Måneder er null){
         mangler.add(
@@ -68,7 +67,7 @@ private fun validerPeriodeOver6Måneder(periodeOver6Måneder: Boolean?): Mutable
     return mangler
 }
 
-private fun validerDato(periodeFraOgMed: LocalDate?, periodeTilOgMed: LocalDate?): MutableSet<Violation> {
+private fun AnnenForelder.validerDato(): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
 
     if(periodeFraOgMed == null){
@@ -109,7 +108,7 @@ private fun validerDato(periodeFraOgMed: LocalDate?, periodeTilOgMed: LocalDate?
     return mangler
 }
 
-private fun validerSituasjonBeskrivelse(situasjonBeskrivelse: String?): MutableSet<Violation> {
+private fun AnnenForelder.validerSituasjonBeskrivelse(): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
 
     if(situasjonBeskrivelse.isNullOrBlank()){
@@ -126,23 +125,21 @@ private fun validerSituasjonBeskrivelse(situasjonBeskrivelse: String?): MutableS
     return mangler
 }
 
-private fun validerInnlagtIHelseinstitusjon(annenForelder: AnnenForelder): MutableSet<Violation>{
+private fun AnnenForelder.validerInnlagtIHelseinstitusjon(): MutableSet<Violation>{
     val mangler: MutableSet<Violation> = mutableSetOf()
 
-    if(annenForelder.vetLengdePåInnleggelseperioden er null){
+    if(vetLengdePåInnleggelseperioden == null){
         mangler.add(
             Violation(
                 parameterName = "AnnenForelder.vetLengdePåInnleggelseperioden",
                 parameterType = ParameterType.ENTITY,
                 reason = "vetLengdePåInnleggelseperioden kan ikke være null",
-                invalidValue = annenForelder.vetLengdePåInnleggelseperioden
+                invalidValue = vetLengdePåInnleggelseperioden
             )
         )
-    }
-
-    if(annenForelder.vetLengdePåInnleggelseperioden != null){
-        if(annenForelder.vetLengdePåInnleggelseperioden) mangler.addAll(validerDato(annenForelder.periodeFraOgMed, annenForelder.periodeTilOgMed))
-        else mangler.addAll(validerPeriodeOver6Måneder(annenForelder.periodeOver6Måneder))
+    } else {
+        if(vetLengdePåInnleggelseperioden) mangler.addAll(validerDato())
+        else mangler.addAll(validerPeriodeOver6Måneder())
     }
 
     return mangler
