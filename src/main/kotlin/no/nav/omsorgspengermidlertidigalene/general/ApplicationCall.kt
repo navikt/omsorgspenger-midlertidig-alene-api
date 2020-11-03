@@ -13,7 +13,7 @@ fun ApplicationCall.getCallId() : CallId {
 }
 
 fun ApplicationCall.metadata() = Metadata(
-    version = 1,
+    version = 1, //Versjonering ved store endringer.
     correlationId = getCallId().value,
     requestId = response.getRequestId()
 )
