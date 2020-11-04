@@ -68,9 +68,14 @@ Valideringen sjekker dette og gir feil dersom en bolsk verdi er null.
   * Navn kan ikke være tom eller kun whitespaces.
   * fnr må være gyldig.
   * periodeOver6Måneder må være satt til true eller false
-  * WIP - Situasjon, beskrivelse og fraogmed tilogmed
+  * situasjon
+    * INNLAGT_I_HELSEINSTITUSJON --> vetLengdePåInnleggelseperioden må være satt. Basert på det valideres enten at 
+    periodeFraOgMed og periodeTilOgMed er satt, og at fraOgMed er før tilOgMed, eller at periodeOver6Måneder er satt. 
+    Satt = ikke null
+    * UTØVER_VERNEPLIKT og FENGSEL --> Valider dato som beskrevet over.
+    * SYKDOM og ANNET --> Validerer at validerSituasjonBeskrivelse ikke er tom, blank eller null, og dato som beskrevet over.
   * antallBarn må være minimum 1
-  * fødselsårBarn kan ikke inneholde verdi mindre enn 0.
+  * fødselsårBarn kan ikke inneholde verdi høyere enn årstallet vi er i.
 * Medlemskap:
   * harBoddIUtlandetSiste12Mnd må være satt til true eller false
   * Hvis harBoddIUtlandetSiste12Mnd er true så må utenlandsoppholdSiste12Mnd inneholde elementer.
