@@ -285,6 +285,5 @@ internal class AnnenForelderValidatorTest {
 }
 
 private fun MutableSet<Violation>.assertAntallMangler(forventetAntallFeil: Int) {
-    println(this)
     assertEquals(forventetAntallFeil, this.size)
 }

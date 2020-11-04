@@ -400,12 +400,6 @@ class ApplicationTest {
                   "name": "AnnenForelder.situasjonBeskrivelse",
                   "reason": "Situasjonsbeskrivelse på annenForelder kan ikke være null, tom eller kun white spaces ved SYKDOM eller ANNET",
                   "invalid_value": " "
-                },
-                {
-                  "type": "entity",
-                  "name": "AnnenForelder.periodeOver6Måneder",
-                  "reason": "periodeOver6Måneder kan ikke være false",
-                  "invalid_value": false
                 }
               ]
             }
