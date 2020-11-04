@@ -88,9 +88,11 @@ internal class SøknadValideringsTest {
     }
 
     @Test(expected = Throwblem::class)
-    fun `Feiler dersom alder på barn er -1`(){
+    fun `Feiler dersom fødselsår på barn er høyere enn året vi er i`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
-            fødselsårBarn = listOf(1,2,-1)
+            fødselsårBarn = listOf(
+                LocalDate.now().year.plus(1)
+            )
         )
         søknad.valider()
     }

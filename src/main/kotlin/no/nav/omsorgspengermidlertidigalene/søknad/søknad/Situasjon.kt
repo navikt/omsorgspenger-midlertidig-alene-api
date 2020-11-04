@@ -29,6 +29,7 @@ internal fun AnnenForelder.validerSituasjon(): MutableSet<Violation> {
 
 private fun AnnenForelder.validerPeriodeOver6Måneder(kanVæreFalse: Boolean = false): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
+
     if(periodeOver6Måneder er null){
         mangler.add(
             Violation(
@@ -39,6 +40,7 @@ private fun AnnenForelder.validerPeriodeOver6Måneder(kanVæreFalse: Boolean = f
             )
         )
     }
+
     if(!kanVæreFalse){
         if(periodeOver6Måneder er false){
             mangler.add(

@@ -4,6 +4,7 @@ import no.nav.helse.dusseldorf.ktor.core.ParameterType
 import no.nav.helse.dusseldorf.ktor.core.Throwblem
 import no.nav.helse.dusseldorf.ktor.core.ValidationProblemDetails
 import no.nav.helse.dusseldorf.ktor.core.Violation
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private val KUN_SIFFER = Regex("\\d+")
@@ -82,14 +83,15 @@ internal fun Søknad.valider() {
         )
     }
 
-    fødselsårBarn.forEachIndexed{ index: Int, alder: Int ->
-        if(alder < 0){
+    fødselsårBarn.forEachIndexed{ index: Int, fødselsår: Int ->
+        val årstallNå = LocalDate.now().year
+        if(fødselsår > årstallNå){
             mangler.add(
                 Violation(
                     parameterName = "fødselsårBarn[$index]",
                     parameterType = ParameterType.ENTITY,
-                    reason = "Alder på barn kan ikke være mindre enn 0",
-                    invalidValue = alder
+                    reason = "Årstall på barnet kan ikke være større enn $årstallNå",
+                    invalidValue = fødselsår
                 )
             )
         }
