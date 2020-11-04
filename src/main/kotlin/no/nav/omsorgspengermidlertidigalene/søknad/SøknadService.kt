@@ -4,6 +4,7 @@ import no.nav.omsorgspengermidlertidigalene.felles.Metadata
 import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
 import no.nav.omsorgspengermidlertidigalene.general.CallId
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdToken
+import no.nav.omsorgspengermidlertidigalene.kafka.SøknadKafkaProducer
 import no.nav.omsorgspengermidlertidigalene.søker.Søker
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerService
 import no.nav.omsorgspengermidlertidigalene.søker.validate
@@ -40,6 +41,5 @@ class SøknadService(
         val komplettSøknad = søknad.tilKomplettSøknad(søker)
 
         kafkaProducer.produce(søknad = komplettSøknad, metadata = metadata)
-        logger.info("Søknad: {}", komplettSøknad) //TODO Fjernes fra prod
     }
 }

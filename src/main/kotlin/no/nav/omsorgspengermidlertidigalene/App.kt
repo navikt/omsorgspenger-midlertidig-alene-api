@@ -32,6 +32,7 @@ import no.nav.omsorgspengermidlertidigalene.barn.BarnService
 import no.nav.omsorgspengermidlertidigalene.barn.barnApis
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenStatusPages
+import no.nav.omsorgspengermidlertidigalene.kafka.SøknadKafkaProducer
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.MellomlagringService
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.mellomlagringApis
 import no.nav.omsorgspengermidlertidigalene.redis.RedisConfig
@@ -40,7 +41,6 @@ import no.nav.omsorgspengermidlertidigalene.redis.RedisStore
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerGateway
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerService
 import no.nav.omsorgspengermidlertidigalene.søker.søkerApis
-import no.nav.omsorgspengermidlertidigalene.søknad.SøknadKafkaProducer
 import no.nav.omsorgspengermidlertidigalene.søknad.SøknadService
 import no.nav.omsorgspengermidlertidigalene.søknad.søknadApis
 import org.slf4j.Logger

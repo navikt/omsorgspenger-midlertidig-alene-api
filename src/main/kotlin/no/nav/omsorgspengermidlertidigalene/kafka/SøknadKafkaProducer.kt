@@ -1,4 +1,4 @@
-package no.nav.omsorgspengermidlertidigalene.søknad
+package no.nav.omsorgspengermidlertidigalene.kafka
 
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Healthy
@@ -7,10 +7,6 @@ import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.omsorgspengermidlertidigalene.felles.Metadata
 import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
 import no.nav.omsorgspengermidlertidigalene.felles.somJson
-import no.nav.omsorgspengermidlertidigalene.kafka.KafkaConfig
-import no.nav.omsorgspengermidlertidigalene.kafka.TopicEntry
-import no.nav.omsorgspengermidlertidigalene.kafka.TopicUse
-import no.nav.omsorgspengermidlertidigalene.kafka.Topics
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.KomplettSøknad
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
