@@ -17,6 +17,32 @@ private val fnrDateFormat = DateTimeFormatter.ofPattern("ddMMyy")
 internal fun Søknad.valider() {
     val mangler: MutableSet<Violation> = mutableSetOf()
 
+    if (harBekreftetOpplysninger er false) {
+        mangler.add(
+            Violation(
+                parameterName = "harBekreftetOpplysninger",
+                parameterType = ParameterType.ENTITY,
+                reason = "Opplysningene må bekreftes for å sende inn søknad.",
+                invalidValue = harBekreftetOpplysninger
+            )
+        )
+    }
+
+    mangler.addAll(nullSjekk(harBekreftetOpplysninger, "harBekreftetOpplysninger"))
+
+    if (harForståttRettigheterOgPlikter er false) {
+        mangler.add(
+            Violation(
+                parameterName = "harForståttRettigheterOgPlikter",
+                parameterType = ParameterType.ENTITY,
+                reason = "Må ha forstått rettigheter og plikter for å sende inn søknad.",
+                invalidValue = harForståttRettigheterOgPlikter
+            )
+        )
+    }
+
+    mangler.addAll(nullSjekk(harForståttRettigheterOgPlikter, "harForståttRettigheterOgPlikter"))
+
     if(antallBarn < 1){
         mangler.add(
             Violation(
@@ -35,50 +61,6 @@ internal fun Søknad.valider() {
                 parameterType = ParameterType.ENTITY,
                 reason = "arbeidssituasjon kan ikke være tom",
                 invalidValue = arbeidssituasjon
-            )
-        )
-    }
-
-    if(harBekreftetOpplysninger er null){
-        mangler.add(
-            Violation(
-                parameterName = "harBekreftetOpplysninger",
-                parameterType = ParameterType.ENTITY,
-                reason = "harBekreftetOpplysninger kan ikke være null",
-                invalidValue = harBekreftetOpplysninger
-            )
-        )
-    }
-
-    if (harBekreftetOpplysninger er false) {
-        mangler.add(
-            Violation(
-                parameterName = "harBekreftetOpplysninger",
-                parameterType = ParameterType.ENTITY,
-                reason = "Opplysningene må bekreftes for å sende inn søknad.",
-                invalidValue = harBekreftetOpplysninger
-            )
-        )
-    }
-
-    if(harForståttRettigheterOgPlikter er null){
-        mangler.add(
-            Violation(
-                parameterName = "harForståttRettigheterOgPlikter",
-                parameterType = ParameterType.ENTITY,
-                reason = "harForståttRettigheterOgPlikter kan ikke være null",
-                invalidValue = harForståttRettigheterOgPlikter
-            )
-        )
-    }
-
-    if (harForståttRettigheterOgPlikter er false) {
-        mangler.add(
-            Violation(
-                parameterName = "harForståttRettigheterOgPlikter",
-                parameterType = ParameterType.ENTITY,
-                reason = "Må ha forstått rettigheter og plikter for å sende inn søknad.",
-                invalidValue = harForståttRettigheterOgPlikter
             )
         )
     }
@@ -172,6 +154,23 @@ internal object Mod11 {
             else -> "${11 - rest}"[0]
         }
     }
+}
+
+internal fun nullSjekk(verdi: Boolean?, navn: String): MutableSet<Violation>{
+    val mangler: MutableSet<Violation> = mutableSetOf<Violation>()
+
+    if(verdi er null){
+        mangler.add(
+            Violation(
+                parameterName = navn,
+                parameterType = ParameterType.ENTITY,
+                reason = "$navn kan ikke være null",
+                invalidValue = verdi
+            )
+        )
+    }
+
+    return mangler
 }
 
 internal infix fun Boolean?.er(forventetVerdi: Boolean?): Boolean = this == forventetVerdi

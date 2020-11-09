@@ -27,22 +27,7 @@ internal fun AnnenForelder.validerSituasjon(): MutableSet<Violation> {
     return mangler
 }
 
-private fun AnnenForelder.validerPeriodeOver6MånederSatt(): MutableSet<Violation> {
-    val mangler: MutableSet<Violation> = mutableSetOf()
-
-    if(periodeOver6Måneder er null){
-        mangler.add(
-            Violation(
-                parameterName = "AnnenForelder.periodeOver6Måneder",
-                parameterType = ParameterType.ENTITY,
-                reason = "periodeOver6Måneder kan ikke være null",
-                invalidValue = periodeOver6Måneder
-            )
-        )
-    }
-
-    return mangler
-}
+private fun AnnenForelder.validerPeriodeOver6MånederSatt() = nullSjekk(periodeOver6Måneder, "periodeOver6Måneder")
 
 private fun AnnenForelder.validerDato(): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()

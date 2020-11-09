@@ -13,16 +13,7 @@ data class Medlemskap(
 internal fun Medlemskap.valider(): MutableSet<Violation> {
     val mangler: MutableSet<Violation> = mutableSetOf()
 
-    if(harBoddIUtlandetSiste12Mnd er null){
-        mangler.add(
-            Violation(
-                parameterName = "harBoddIUtlandetSiste12Mnd",
-                parameterType = ParameterType.ENTITY,
-                reason = "harBoddIUtlandetSiste12Mnd kan ikke være null",
-                invalidValue = harBoddIUtlandetSiste12Mnd
-            )
-        )
-    }
+    mangler.addAll(nullSjekk(harBoddIUtlandetSiste12Mnd, "harBoddIUtlandetSiste12Mnd"))
 
     if(harBoddIUtlandetSiste12Mnd er true && utenlandsoppholdSiste12Mnd.isEmpty()){
         mangler.add(
@@ -50,16 +41,7 @@ internal fun Medlemskap.valider(): MutableSet<Violation> {
         mangler.addAll(utenlandsopphold.valider(relatertFelt = "medlemskap.utenlandsoppholdSiste12Mnd[$index]"))
     }
 
-    if(skalBoIUtlandetNeste12Mnd er null){
-        mangler.add(
-            Violation(
-                parameterName = "skalBoIUtlandetNeste12Mnd",
-                parameterType = ParameterType.ENTITY,
-                reason = "skalBoIUtlandetNeste12Mnd kan ikke være null",
-                invalidValue = skalBoIUtlandetNeste12Mnd
-            )
-        )
-    }
+    mangler.addAll(nullSjekk(skalBoIUtlandetNeste12Mnd, "skalBoIUtlandetNeste12Mnd"))
 
     if(skalBoIUtlandetNeste12Mnd er true && utenlandsoppholdNeste12Mnd.isEmpty()){
         mangler.add(
