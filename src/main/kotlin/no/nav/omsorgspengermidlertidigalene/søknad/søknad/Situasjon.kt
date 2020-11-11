@@ -95,7 +95,7 @@ private fun AnnenForelder.validerInnlagtIHelseinstitusjon(): MutableSet<Violatio
             Violation(
                 parameterName = "AnnenForelder.vetLengdePåInnleggelseperioden",
                 parameterType = ParameterType.ENTITY,
-                reason = "vetLengdePåInnleggelseperioden kan ikke være null",
+                reason = "vetLengdePåInnleggelseperioden kan ikke være null dersom situasjon er innlagt i helseinstitusjon",
                 invalidValue = vetLengdePåInnleggelseperioden
             )
         )
