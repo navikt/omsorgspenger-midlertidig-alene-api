@@ -15,8 +15,8 @@ data class Søknad(
     val antallBarn: Int,
     val fødselsårBarn: List<Int>,
     val medlemskap: Medlemskap,
-    val harForståttRettigheterOgPlikter: Boolean? = null, //Settes til null for å unngå default false
-    val harBekreftetOpplysninger: Boolean? = null //Settes til null for å unngå default false
+    val harForståttRettigheterOgPlikter: Boolean? = null,
+    val harBekreftetOpplysninger: Boolean? = null
 ) {
     fun tilKomplettSøknad(søker: Søker): KomplettSøknad {
         return KomplettSøknad(

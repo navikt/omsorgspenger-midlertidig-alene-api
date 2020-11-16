@@ -8,11 +8,9 @@ import org.junit.Test
 import java.time.LocalDate
 import kotlin.test.assertTrue
 
-
 internal class SøknadValideringsTest {
 
     companion object {
-        private val gyldigFødselsnummerA = "02119970078"
         private val ugyldigFødselsnummer = "12345678900"
     }
 
@@ -44,25 +42,9 @@ internal class SøknadValideringsTest {
     }
 
     @Test(expected = Throwblem::class)
-    fun `Feiler dersom harForståttRettigheterOgPlikter er null`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            harForståttRettigheterOgPlikter = null
-        )
-        søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
     fun `Feiler dersom harBekreftetOpplysninger er false`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
             harBekreftetOpplysninger = false
-        )
-        søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom harBekreftetOpplysninger er null`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            harBekreftetOpplysninger = null
         )
         søknad.valider()
     }

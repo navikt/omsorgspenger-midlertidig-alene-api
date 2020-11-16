@@ -62,7 +62,7 @@ omsorgspenger-midlertidig-alene-prosessering konsumerer.
 
 **Validering**
 * harForståttRettigheterOgPliker og harBekreftetOpplysninger må være true
-* Alle bolske verdier blir satt til null dersom noe går falt ved deserialisering, for å unngå default false.
+* Alle bolske verdier hvor vi tillater true og false blir satt til null dersom noe går falt ved deserialisering, for å unngå default false.
 Valideringen sjekker dette og gir feil dersom en bolsk verdi er null.
 * AnnenForelder:
   * Navn kan ikke være tom eller kun whitespaces.
