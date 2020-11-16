@@ -173,7 +173,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
             healthChecks = setOf(
                 søknadKafkaProducer,
                 HttpRequestHealthCheck(mapOf(
-
+                //TODO Trenger denne sjekke helse til noen? Kontakt med prosessering er kafka, mulig mot oppslag?
                 ))
             )
         )
