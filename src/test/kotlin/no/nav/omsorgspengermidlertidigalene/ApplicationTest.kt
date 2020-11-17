@@ -458,8 +458,8 @@ class ApplicationTest {
                   }
                 ]
               },
-              "harForståttRettigheterOgPlikter": null,
-              "harBekreftetOpplysninger": null
+              "harForståttRettigheterOgPlikter": true,
+              "harBekreftetOpplysninger": true
             }
         """.trimIndent()
 
@@ -473,18 +473,6 @@ class ApplicationTest {
                   "type": "/problem-details/invalid-request-parameters",
                   "title": "invalid-request-parameters",
                   "invalid_parameters": [
-                    {
-                      "type": "entity",
-                      "name": "harBekreftetOpplysninger",
-                      "reason": "harBekreftetOpplysninger kan ikke være null",
-                      "invalid_value": null
-                    },
-                    {
-                      "type": "entity",
-                      "name": "harForståttRettigheterOgPlikter",
-                      "reason": "harForståttRettigheterOgPlikter kan ikke være null",
-                      "invalid_value": null
-                    },
                     {
                       "type": "entity",
                       "name": "harBoddIUtlandetSiste12Mnd",

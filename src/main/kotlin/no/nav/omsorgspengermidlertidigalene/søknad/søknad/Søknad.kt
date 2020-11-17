@@ -15,11 +15,10 @@ data class Søknad(
     val antallBarn: Int,
     val fødselsårBarn: List<Int>,
     val medlemskap: Medlemskap,
-    val harForståttRettigheterOgPlikter: Boolean? = null,
-    val harBekreftetOpplysninger: Boolean? = null
+    val harForståttRettigheterOgPlikter: Boolean,
+    val harBekreftetOpplysninger: Boolean
 ) {
-    fun tilKomplettSøknad(søker: Søker): KomplettSøknad {
-        return KomplettSøknad(
+    fun tilKomplettSøknad(søker: Søker): KomplettSøknad = KomplettSøknad(
             mottatt = ZonedDateTime.now(ZoneOffset.UTC),
             søker = søker,
             søknadId = søknadId,
@@ -30,10 +29,10 @@ data class Søknad(
             antallBarn = antallBarn,
             fødselsårBarn = fødselsårBarn,
             medlemskap = medlemskap,
-            harBekreftetOpplysninger = harBekreftetOpplysninger!!,
-            harForståttRettigheterOgPlikter = harForståttRettigheterOgPlikter!!
+            harBekreftetOpplysninger = harBekreftetOpplysninger,
+            harForståttRettigheterOgPlikter = harForståttRettigheterOgPlikter
         )
-    }
+
 }
 
 enum class Arbeidssituasjon(){

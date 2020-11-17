@@ -1,6 +1,5 @@
 package no.nav.omsorgspengermidlertidigalene
 
-import com.github.kittinunf.fuel.httpGet
 import com.github.tomakehurst.wiremock.WireMockServer
 import no.nav.common.KafkaEnvironment
 import no.nav.helse.dusseldorf.testsupport.jws.ClientCredentials
@@ -8,7 +7,6 @@ import no.nav.helse.dusseldorf.testsupport.jws.LoginService
 import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2WellKnownUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getLoginServiceV1WellKnownUrl
 import no.nav.omsorgspengermidlertidigalene.wiremock.getK9OppslagUrl
-import org.json.JSONObject
 
 object TestConfiguration {
 
@@ -57,5 +55,4 @@ object TestConfiguration {
         return map.toMap()
     }
 
-    private fun String.getAsJson() = JSONObject(this.httpGet().responseString().third.component1())
 }

@@ -67,7 +67,6 @@ Valideringen sjekker dette og gir feil dersom en bolsk verdi er null.
 * AnnenForelder:
   * Navn kan ikke være tom eller kun whitespaces.
   * fnr må være gyldig.
-  * periodeOver6Måneder må være satt til true eller false
   * situasjon
     * INNLAGT_I_HELSEINSTITUSJON --> vetLengdePåInnleggelseperioden må være satt. Basert på det valideres enten at 
     periodeFraOgMed og periodeTilOgMed er satt, og at fraOgMed er før tilOgMed, eller at periodeOver6Måneder er satt. 

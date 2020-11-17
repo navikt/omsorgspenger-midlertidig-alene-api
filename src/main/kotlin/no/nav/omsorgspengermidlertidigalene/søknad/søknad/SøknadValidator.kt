@@ -28,8 +28,6 @@ internal fun Søknad.valider() {
         )
     }
 
-    mangler.addAll(nullSjekk(harBekreftetOpplysninger, "harBekreftetOpplysninger"))
-
     if (harForståttRettigheterOgPlikter er false) {
         mangler.add(
             Violation(
@@ -40,8 +38,6 @@ internal fun Søknad.valider() {
             )
         )
     }
-
-    mangler.addAll(nullSjekk(harForståttRettigheterOgPlikter, "harForståttRettigheterOgPlikter"))
 
     if(antallBarn < 1){
         mangler.add(

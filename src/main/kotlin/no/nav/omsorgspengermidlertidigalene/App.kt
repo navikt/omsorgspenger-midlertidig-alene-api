@@ -147,7 +147,6 @@ fun Application.omsorgpengermidlertidigaleneapi() {
                 idTokenProvider = idTokenProvider
             )
 
-            //TODO: Fix redis når dette er tilgjengelig i GCP
             mellomlagringApis(
                 mellomlagringService = MellomlagringService(
                     RedisStore(
