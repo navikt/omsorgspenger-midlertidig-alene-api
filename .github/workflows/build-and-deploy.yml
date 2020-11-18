@@ -90,4 +90,4 @@ jobs:
 #          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
 #          CLUSTER: prod-sbs
 #          RESOURCE: nais/naiserator.yml
-#          VARS: nais/prod-sbs.json
+#          VARS: nais/prod-gcp.json
