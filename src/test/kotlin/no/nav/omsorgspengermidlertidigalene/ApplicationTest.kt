@@ -16,7 +16,7 @@ import no.nav.omsorgspengermidlertidigalene.søknad.søknad.AnnenForelder
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Medlemskap
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Situasjon
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Utenlandsopphold
-import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengesoknadApiConfig
+import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengerMidlertidigAleneApiConfig
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubOppslagHealth
@@ -46,7 +46,7 @@ class ApplicationTest {
             .withAzureSupport()
             .withNaisStsSupport()
             .withLoginServiceSupport()
-            .omsorgspengesoknadApiConfig()
+            .omsorgspengerMidlertidigAleneApiConfig()
             .build()
             .stubOppslagHealth()
             .stubK9OppslagSoker()

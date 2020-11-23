@@ -54,7 +54,7 @@ class SøkerGateway (
             logger = logger
         ) {
             val (request, _, result) = Operation.monitored(
-                app = "omsorgspengesoknad-api",
+                app = "omsorgspenger-midlertidig-alene-api",
                 operation = HENTE_SOKER_OPERATION,
                 resultResolver = { 200 == it.second.statusCode }
             ) { httpRequest.awaitStringResponseResult() }

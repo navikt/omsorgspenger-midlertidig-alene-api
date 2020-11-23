@@ -9,7 +9,7 @@ import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 
 internal const val k9OppslagPath = "/helse-reverse-proxy/k9-selvbetjening-oppslag-mock"
 
-internal fun WireMockBuilder.omsorgspengesoknadApiConfig() = wireMockConfiguration {
+internal fun WireMockBuilder.omsorgspengerMidlertidigAleneApiConfig() = wireMockConfiguration {
     it
         .extensions(SokerResponseTransformer())
         .extensions(BarnResponseTransformer())

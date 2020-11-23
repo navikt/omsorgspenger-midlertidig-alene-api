@@ -3,7 +3,7 @@ package no.nav.omsorgspengermidlertidigalene
 import io.ktor.server.testing.*
 import no.nav.helse.dusseldorf.testsupport.asArguments
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
-import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengesoknadApiConfig
+import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengerMidlertidigAleneApiConfig
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubOppslagHealth
@@ -23,7 +23,7 @@ class ApplicationWithMocks {
                 .withAzureSupport()
                 .withNaisStsSupport()
                 .withLoginServiceSupport()
-                .omsorgspengesoknadApiConfig()
+                .omsorgspengerMidlertidigAleneApiConfig()
                 .build()
                 .stubOppslagHealth()
                 .stubK9OppslagSoker()
