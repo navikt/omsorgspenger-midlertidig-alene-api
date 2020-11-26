@@ -12,8 +12,6 @@ internal val vekttallProviderFnr1: (Int) -> Int = { arrayOf(3, 7, 6, 1, 8, 9, 4,
 internal val vekttallProviderFnr2: (Int) -> Int = { arrayOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2).reversedArray()[it] }
 private val fnrDateFormat = DateTimeFormatter.ofPattern("ddMMyy")
 
-
-
 internal fun Søknad.valider() {
     val mangler: MutableSet<Violation> = mutableSetOf()
 
