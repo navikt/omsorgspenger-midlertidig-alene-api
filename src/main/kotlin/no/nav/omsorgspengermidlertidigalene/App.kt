@@ -1,11 +1,7 @@
 package no.nav.omsorgspengermidlertidigalene
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
@@ -18,7 +14,6 @@ import io.ktor.util.*
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.helse.dusseldorf.ktor.auth.allIssuers
 import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
-import no.nav.helse.dusseldorf.ktor.client.HttpRequestHealthCheck
 import no.nav.helse.dusseldorf.ktor.core.*
 import no.nav.helse.dusseldorf.ktor.health.HealthReporter
 import no.nav.helse.dusseldorf.ktor.health.HealthRoute
@@ -27,9 +22,6 @@ import no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages
 import no.nav.helse.dusseldorf.ktor.jackson.dusseldorfConfigured
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import no.nav.helse.dusseldorf.ktor.metrics.init
-import no.nav.omsorgspengermidlertidigalene.barn.BarnGateway
-import no.nav.omsorgspengermidlertidigalene.barn.BarnService
-import no.nav.omsorgspengermidlertidigalene.barn.barnApis
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenStatusPages
 import no.nav.omsorgspengermidlertidigalene.kafka.SøknadKafkaProducer
@@ -114,11 +106,6 @@ fun Application.omsorgpengermidlertidigaleneapi() {
             apiGatewayApiKey = apiGatewayApiKey
         )
 
-        val barnGateway = BarnGateway(
-            baseUrl = configuration.getK9OppslagUrl(),
-            apiGatewayApiKey = apiGatewayApiKey
-        )
-
         val søkerService = SøkerService(
             søkerGateway = søkerGateway
         )
@@ -137,13 +124,6 @@ fun Application.omsorgpengermidlertidigaleneapi() {
 
             søkerApis(
                 søkerService = søkerService,
-                idTokenProvider = idTokenProvider
-            )
-
-            barnApis(
-                barnService = BarnService(
-                    barnGateway = barnGateway
-                ),
                 idTokenProvider = idTokenProvider
             )
 
@@ -171,9 +151,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
         val healthService = HealthService(
             healthChecks = setOf(
                 søknadKafkaProducer,
-                HttpRequestHealthCheck(mapOf(
-                //TODO Trenger denne sjekke helse til noen? Kontakt med prosessering er kafka, mulig mot oppslag?
-                ))
+                søkerGateway
             )
         )
 
@@ -209,13 +187,5 @@ fun Application.omsorgpengermidlertidigaleneapi() {
             try { idTokenProvider.getIdToken(call).getId() }
             catch (cause: Throwable) { null }
         }
-    }
-}
-
-fun ObjectMapper.k9SelvbetjeningOppslagKonfigurert(): ObjectMapper {
-    return jacksonObjectMapper().dusseldorfConfigured().apply {
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        registerModule(JavaTimeModule())
-        propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     }
 }

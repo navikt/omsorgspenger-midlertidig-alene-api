@@ -32,25 +32,6 @@ omsorgspenger-midlertidig-alene-prosessering konsumerer.
 }
 ```
 
-**GET @/barn --> Gir 200 respons med json over barn, eventuelt tom liste ved ingen barn.**
-```
-{
-    "barn": [{
-        "fødselsdato": "2000-08-27",
-        "fornavn": "BARN",
-        "mellomnavn": "EN",
-        "etternavn": "BARNESEN",
-        "aktør_id": "1000000000001"
-    }, {
-        "fødselsdato": "2001-04-10",
-        "fornavn": "BARN",
-        "mellomnavn": "TO",
-        "etternavn": "BARNESEN",
-        "aktør_id": "1000000000002"
-    }]
-}
-```
-
 **POST @/soknad/valider --> 202 respons ved gyldig søknad, ellers 400 og liste over feil. Kan brukes før innsending for å sjekke om søknaden er gyldig**
 
 **POST @/soknad --> 202 respons ved gyldig søknad. Eventuelt tilbake 400 og liste over valideringsbrudd.**

@@ -30,7 +30,7 @@ internal fun AnnenForelder.valider(): MutableSet<Violation> {
         )
     }
 
-    if(fnr.erGyldigNorskIdentifikator() er false){
+    if(fnr.gyldigNorskIdentifikator() er false){
         mangler.add(
             Violation(
                 parameterName = "AnnenForelder.fnr",

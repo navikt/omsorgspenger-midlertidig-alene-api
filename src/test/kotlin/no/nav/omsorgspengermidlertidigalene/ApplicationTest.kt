@@ -9,7 +9,10 @@ import io.ktor.util.*
 import no.nav.common.KafkaEnvironment
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import no.nav.helse.getAuthCookie
-import no.nav.omsorgspengermidlertidigalene.felles.*
+import no.nav.omsorgspengermidlertidigalene.felles.SØKER_URL
+import no.nav.omsorgspengermidlertidigalene.felles.SØKNAD_URL
+import no.nav.omsorgspengermidlertidigalene.felles.VALIDERING_URL
+import no.nav.omsorgspengermidlertidigalene.felles.somJson
 import no.nav.omsorgspengermidlertidigalene.kafka.Topics
 import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.AnnenForelder
@@ -17,7 +20,6 @@ import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Medlemskap
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Situasjon
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Utenlandsopphold
 import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengerMidlertidigAleneApiConfig
-import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubOppslagHealth
 import org.json.JSONObject
@@ -50,7 +52,6 @@ class ApplicationTest {
             .build()
             .stubOppslagHealth()
             .stubK9OppslagSoker()
-            .stubK9OppslagBarn()
 
         private val kafkaEnvironment = KafkaWrapper.bootstrap()
         private val kafkaTestConsumer = kafkaEnvironment.testConsumer()
@@ -106,67 +107,6 @@ class ApplicationTest {
                 }
             }
         }
-    }
-
-    @Test
-    fun `Henting av barn`() {
-        requestAndAssert(
-            httpMethod = HttpMethod.Get,
-            path = "/barn",
-            expectedCode = HttpStatusCode.OK,
-            //language=JSON
-            expectedResponse = """
-            {
-                "barn": [{
-                    "fødselsdato": "2000-08-27",
-                    "fornavn": "BARN",
-                    "mellomnavn": "EN",
-                    "etternavn": "BARNESEN",
-                    "aktørId": "1000000000001"
-                }, 
-                {
-                    "fødselsdato": "2001-04-10",
-                    "fornavn": "BARN",
-                    "mellomnavn": "TO",
-                    "etternavn": "BARNESEN",
-                    "aktørId": "1000000000002"
-                }]
-            }
-            """.trimIndent(),
-            cookie = getAuthCookie(gyldigFodselsnummerA)
-        )
-    }
-
-    @Test
-    fun `Har ingen registrerte barn`() {
-        requestAndAssert(
-            httpMethod = HttpMethod.Get,
-            path = BARN_URL,
-            expectedCode = HttpStatusCode.OK,
-            expectedResponse = """
-            {
-                "barn": []
-            }
-            """.trimIndent(),
-            cookie = getAuthCookie("07077712345")
-        )
-    }
-
-    @Test
-    fun `Feil ved henting av barn skal returnere tom liste`() {
-        wireMockServer.stubK9OppslagBarn(simulerFeil = true)
-        requestAndAssert(
-            httpMethod = HttpMethod.Get,
-            path = BARN_URL,
-            expectedCode = HttpStatusCode.OK,
-            expectedResponse = """
-            {
-                "barn": []
-            }
-            """.trimIndent(),
-            cookie = getAuthCookie(gyldigFodselsnummerA)
-        )
-        wireMockServer.stubK9OppslagBarn()
     }
 
     @Test

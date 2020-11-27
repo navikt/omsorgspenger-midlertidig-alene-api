@@ -102,7 +102,7 @@ fun String.starterMedFodselsdato(): Boolean {
     }
 }
 
-fun String.erGyldigNorskIdentifikator(): Boolean {
+fun String.gyldigNorskIdentifikator(): Boolean {
     if (length != 11 || !erKunSiffer() || !starterMedFodselsdato()) return false
 
     val forventetKontrollsifferEn = get(9)

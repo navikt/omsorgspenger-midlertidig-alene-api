@@ -5,9 +5,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.kittinunf.fuel.coroutines.awaitStringResponseResult
+import com.github.kittinunf.fuel.httpGet
 import io.ktor.http.*
 import no.nav.helse.dusseldorf.ktor.client.buildURL
 import no.nav.helse.dusseldorf.ktor.core.Retry
+import no.nav.helse.dusseldorf.ktor.health.Healthy
+import no.nav.helse.dusseldorf.ktor.health.Result
+import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.helse.dusseldorf.ktor.metrics.Operation
 import no.nav.omsorgspengermidlertidigalene.general.CallId
 import no.nav.omsorgspengermidlertidigalene.general.auth.ApiGatewayApiKey
@@ -21,7 +25,7 @@ import java.time.LocalDate
 
 class SøkerGateway (
     baseUrl: URI,
-    apiGatewayApiKey: ApiGatewayApiKey
+    private val apiGatewayApiKey: ApiGatewayApiKey
 ) : K9OppslagGateway(baseUrl, apiGatewayApiKey) {
 
     private companion object {
@@ -70,6 +74,7 @@ class SøkerGateway (
         }
         return oppslagRespons
     }
+
     data class SokerOppslagRespons(
         val aktør_id: String,
         val fornavn: String,
@@ -77,4 +82,31 @@ class SøkerGateway (
         val etternavn: String,
         val fødselsdato: LocalDate
     )
+
+    override suspend fun check(): Result {
+        val httpRequest = Url.buildURL(
+            baseUrl = baseUrl,
+            pathParts = listOf("/isalive")
+        ).toString()
+            .httpGet()
+            .header(
+                HttpHeaders.Accept to "text/plain",
+                apiGatewayApiKey.headerKey to apiGatewayApiKey.value
+            )
+
+        val (request, _, result) = Operation.monitored(
+            app = "omsorgspenger-midlertidig-alene-api",
+            operation = HENTE_SOKER_OPERATION,
+            resultResolver = { 200 == it.second.statusCode }
+        ) { httpRequest.awaitStringResponseResult() }
+
+        return result.fold(
+            { success -> Healthy("k9-selvbetjent-oppslag", "Helsesjekk mot k9-selvbetjent-oppslag OK.")},
+            { error ->
+                logger.error("Feil ved helsesjekk mot k9-selvbetjent-oppslag", error)
+                UnHealthy("k9-selvbetjent-oppslag", "Helsesjekk mot k9-selvbetjent-oppslag feiler")
+            }
+        )
+    }
+
 }
