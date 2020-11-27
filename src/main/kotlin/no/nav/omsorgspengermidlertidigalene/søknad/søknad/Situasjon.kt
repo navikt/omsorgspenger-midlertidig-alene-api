@@ -37,7 +37,7 @@ private fun AnnenForelder.validerDato(): MutableSet<Violation> {
             Violation(
                 parameterName = "AnnenForelder.periodeFraOgMed",
                 parameterType = ParameterType.ENTITY,
-                reason = "periodeFraOgMed kan ikke være null dersom situasjonen er fengsel eller verneplikt", //TODO Endre tekst, gjelder også for helse
+                reason = "periodeFraOgMed kan ikke være null dersom situasjonen er fengsel, verneplikt eller innlagtIHelseinstitusjon",
                 invalidValue = periodeFraOgMed
             )
         )
@@ -48,7 +48,7 @@ private fun AnnenForelder.validerDato(): MutableSet<Violation> {
             Violation(
                 parameterName = "AnnenForelder.periodeTilOgMed",
                 parameterType = ParameterType.ENTITY,
-                reason = "periodeTilOgMed kan ikke være null dersom situasjonen er fengsel eller verneplikt", //TODO Endre tekst, gjelder også for helse
+                reason = "periodeTilOgMed kan ikke være null dersom situasjonen er fengsel, verneplikt eller innlagtIHelseinstitusjon",
                 invalidValue = periodeTilOgMed
             )
         )

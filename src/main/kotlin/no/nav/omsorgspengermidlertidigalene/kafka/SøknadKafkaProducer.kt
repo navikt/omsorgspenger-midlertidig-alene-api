@@ -42,7 +42,7 @@ class SøknadKafkaProducer(
         val recordMetaData = producer.send(
             ProducerRecord(
                 OMS_MIDLERTIDIG_ALENE_MOTTATT_TOPIC.name,
-                søknad.søknadId, //TODO Kanskje bruke ID heller?
+                søknad.søknadId,
                 TopicEntry(
                     metadata = metadata,
                     data = JSONObject(søknad.somJson())
