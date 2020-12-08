@@ -34,6 +34,8 @@ class SøknadService(
         val søker: Søker = søkerService.getSøker(idToken = idToken, callId = callId)
         logger.trace("Søker hentet.")
 
+        logger.info("AktørID: ${søker.aktørId}")
+
         logger.trace("Validerer søker.")
         søker.validate()
         logger.trace("Søker OK.")
