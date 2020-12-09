@@ -7,7 +7,7 @@
   "maxReplicas": "2",
   "tenant" : "nav.no",
   "ingresses": [
-    "https://omsorgspenger-midlertidig-alene-api.intern.nav.no"
+    "https://omsorgspenger-midlertidig-alene-api.nav.no"
   ],
   "externalHosts": [
     "api-gw.oera.no",
