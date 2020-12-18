@@ -8,7 +8,7 @@ dependencies {
     compile 'io.ktor:ktor-locations:1.4.3'
     compile 'no.nav.helse:dusseldorf-ktor-client:1.4.3.4d13d2f'
     compile 'no.nav.helse:dusseldorf-oauth2-client:1.4.3.4d13d2f'
-    compile 'io.lettuce:lettuce-core:5.2.1.RELEASE'
+    compile 'io.lettuce:lettuce-core:5.3.5.RELEASE'
     compile 'com.github.fppt:jedis-mock:0.1.16'
     compile 'org.apache.kafka:kafka-clients:2.3.0'
     testCompile 'no.nav.helse:dusseldorf-test-support:1.4.3.4d13d2f'
@@ -23,7 +23,7 @@ dependencies {
     testCompile 'io.ktor:ktor-locations:1.4.3'
     testCompile 'no.nav.helse:dusseldorf-ktor-client:1.4.3.4d13d2f'
     testCompile 'no.nav.helse:dusseldorf-oauth2-client:1.4.3.4d13d2f'
-    testCompile 'io.lettuce:lettuce-core:5.2.1.RELEASE'
+    testCompile 'io.lettuce:lettuce-core:5.3.5.RELEASE'
     testCompile 'com.github.fppt:jedis-mock:0.1.16'
     testCompile 'org.apache.kafka:kafka-clients:2.3.0'
 }
