@@ -4,8 +4,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val dusseldorfKtorVersion = "1.4.3.4d13d2f"
 val ktorVersion = ext.get("ktorVersion").toString()
 val mainClass = "no.nav.omsorgspengermidlertidigalene.AppKt"
-val kafkaEmbeddedEnvVersion = "2.2.0"
-val kafkaVersion = "2.3.0" // Alligned med version fra kafka-embedded-env
+val kafkaEmbeddedEnvVersion = "2.4.0"
+val kafkaVersion = "2.4.0" // Alligned med version fra kafka-embedded-env
 
 plugins {
     kotlin("jvm") version "1.4.21"
@@ -49,6 +49,7 @@ repositories {
     maven("https://dl.bintray.com/kotlin/ktor")
     maven("https://kotlin.bintray.com/kotlinx")
     maven("http://packages.confluent.io/maven/")
+    maven("https://jitpack.io")
 
     maven {
         name = "GitHubPackages"
