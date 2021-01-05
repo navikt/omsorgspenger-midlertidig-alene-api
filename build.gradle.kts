@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "1.4.3.4d13d2f"
+val dusseldorfKtorVersion = "1.5.0.3315e68"
 val ktorVersion = ext.get("ktorVersion").toString()
 val mainClass = "no.nav.omsorgspengermidlertidigalene.AppKt"
 val kafkaEmbeddedEnvVersion = "2.4.0"
@@ -14,7 +14,7 @@ plugins {
 
 buildscript {
     // Henter ut diverse dependency versjoner, i.e. ktorVersion.
-    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/4d13d2f1b89e32fd12b989022245705151dd519b/gradle/dusseldorf-ktor.gradle.kts")
+    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/3315e68ec40ad9a24fa0c45d4f463d9cbae56fa0/gradle/dusseldorf-ktor.gradle.kts")
 }
 
 dependencies {
@@ -46,11 +46,7 @@ dependencies {
 }
 
 repositories {
-    maven("https://dl.bintray.com/kotlin/ktor")
-    maven("https://kotlin.bintray.com/kotlinx")
-    maven("http://packages.confluent.io/maven/")
-    maven("https://jitpack.io")
-
+    mavenLocal()
     maven {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
@@ -59,10 +55,13 @@ repositories {
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
-
-    jcenter()
-    mavenLocal()
     mavenCentral()
+    jcenter()
+    maven("https://dl.bintray.com/kotlin/ktor")
+    maven("https://kotlin.bintray.com/kotlinx")
+    maven("https://packages.confluent.io/maven/")
+    maven("https://jitpack.io")
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
 }
 
 
