@@ -46,11 +46,7 @@ dependencies {
 }
 
 repositories {
-    maven("https://dl.bintray.com/kotlin/ktor")
-    maven("https://kotlin.bintray.com/kotlinx")
-    maven("https://packages.confluent.io/maven/")
-    maven("https://jitpack.io")
-
+    mavenLocal()
     maven {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
@@ -59,10 +55,13 @@ repositories {
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
-
-    jcenter()
-    mavenLocal()
     mavenCentral()
+    jcenter()
+    maven("https://dl.bintray.com/kotlin/ktor")
+    maven("https://kotlin.bintray.com/kotlinx")
+    maven("https://packages.confluent.io/maven/")
+    maven("https://jitpack.io")
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
 }
 
 
