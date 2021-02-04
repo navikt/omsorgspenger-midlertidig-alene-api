@@ -8,7 +8,7 @@ val kafkaEmbeddedEnvVersion = "2.4.0"
 val kafkaVersion = "2.4.0" // Alligned med version fra kafka-embedded-env
 
 plugins {
-    kotlin("jvm") version "1.4.21"
+    kotlin("jvm") version "1.4.30"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
