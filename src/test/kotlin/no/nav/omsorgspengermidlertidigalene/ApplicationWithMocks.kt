@@ -1,8 +1,10 @@
 package no.nav.omsorgspengermidlertidigalene
 
+import com.github.fppt.jedismock.RedisServer
 import io.ktor.server.testing.*
 import no.nav.helse.dusseldorf.testsupport.asArguments
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
+import no.nav.omsorgspengermidlertidigalene.mellomlagring.started
 import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengerMidlertidigAleneApiConfig
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubOppslagHealth
@@ -27,9 +29,14 @@ class ApplicationWithMocks {
                 .stubOppslagHealth()
                 .stubK9OppslagSoker()
 
+            val redisServer: RedisServer = RedisServer
+                .newRedisServer(6379)
+                .started()
+
             val testArgs = TestConfiguration.asMap(
                 port = 8082,
-                wireMockServer = wireMockServer
+                wireMockServer = wireMockServer,
+                redisServer = redisServer
             ).asArguments()
 
             Runtime.getRuntime().addShutdownHook(object : Thread() {

@@ -1,12 +1,12 @@
 package no.nav.omsorgspengermidlertidigalene.mellomlagring
 
+import com.github.fppt.jedismock.RedisServer
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
 import io.ktor.util.*
 import no.nav.omsorgspengermidlertidigalene.Configuration
 import no.nav.omsorgspengermidlertidigalene.TestConfiguration
 import no.nav.omsorgspengermidlertidigalene.redis.RedisConfig
-import no.nav.omsorgspengermidlertidigalene.redis.RedisConfigurationProperties
 import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
 import no.nav.omsorgspengermidlertidigalene.redis.RedisStore
 import org.junit.AfterClass
@@ -18,14 +18,20 @@ import kotlin.test.assertNotNull
 @KtorExperimentalAPI
 class MellomlagringTest {
     private companion object {
-        val redisClient = RedisConfig(RedisConfigurationProperties(true)).redisClient(
-            Configuration(
-                HoconApplicationConfig(ConfigFactory.parseMap(TestConfiguration.asMap()))
-            )
+        val redisServer: RedisServer = RedisServer
+            .newRedisServer(6379)
+            .started()
+
+        val redisClient = RedisConfig.redisClient(
+            redisHost = redisServer.host,
+            redisPort = redisServer.bindPort
         )
+
+
         val redisStore = RedisStore(
             redisClient
         )
+
         val mellomlagringService = MellomlagringService(
             redisStore,
             "VerySecretPass"
@@ -35,7 +41,7 @@ class MellomlagringTest {
         @JvmStatic
         fun teardown() {
             redisClient.shutdown()
-            RedisMockUtil.stopRedisMocked()
+            redisServer.stop()
         }
     }
 
