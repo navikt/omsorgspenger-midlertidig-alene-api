@@ -28,7 +28,6 @@ import no.nav.omsorgspengermidlertidigalene.kafka.SøknadKafkaProducer
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.MellomlagringService
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.mellomlagringApis
 import no.nav.omsorgspengermidlertidigalene.redis.RedisConfig
-import no.nav.omsorgspengermidlertidigalene.redis.RedisConfigurationProperties
 import no.nav.omsorgspengermidlertidigalene.redis.RedisStore
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerGateway
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerService
@@ -130,15 +129,15 @@ fun Application.omsorgpengermidlertidigaleneapi() {
             mellomlagringApis(
                 mellomlagringService = MellomlagringService(
                     RedisStore(
-                        RedisConfig(
-                            RedisConfigurationProperties(
-                                configuration.getRedisHost().equals("localhost")
-                            )
-                        ).redisClient(configuration)
-                    ), configuration.getStoragePassphrase()),
+                        redisClient = RedisConfig.redisClient(
+                            redisHost = configuration.getRedisHost(),
+                            redisPort = configuration.getRedisPort()
+                        )
+                    ),
+                    passphrase = configuration.getStoragePassphrase(),
+                ),
                 idTokenProvider = idTokenProvider
             )
-
             søknadApis(
                 idTokenProvider = idTokenProvider,
                 søknadService = SøknadService(

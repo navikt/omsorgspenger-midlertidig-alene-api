@@ -1,5 +1,6 @@
 package no.nav.omsorgspengermidlertidigalene
 
+import com.github.fppt.jedismock.RedisServer
 import com.github.tomakehurst.wiremock.http.Cookie
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
@@ -14,6 +15,7 @@ import no.nav.omsorgspengermidlertidigalene.felles.SØKNAD_URL
 import no.nav.omsorgspengermidlertidigalene.felles.VALIDERING_URL
 import no.nav.omsorgspengermidlertidigalene.felles.somJson
 import no.nav.omsorgspengermidlertidigalene.kafka.Topics
+import no.nav.omsorgspengermidlertidigalene.mellomlagring.started
 import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.AnnenForelder
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Medlemskap
@@ -53,17 +55,19 @@ class ApplicationTest {
             .stubOppslagHealth()
             .stubK9OppslagSoker()
 
+        val redisServer: RedisServer = RedisServer
+            .newRedisServer(6379).started()
+
         private val kafkaEnvironment = KafkaWrapper.bootstrap()
         private val kafkaTestConsumer = kafkaEnvironment.testConsumer()
 
         fun getConfig(kafkaEnvironment: KafkaEnvironment): ApplicationConfig {
             val fileConfig = ConfigFactory.load()
-            val testConfig = ConfigFactory.parseMap(
-                TestConfiguration.asMap(
-                    wireMockServer = wireMockServer,
-                    kafkaEnvironment = kafkaEnvironment
-                )
-            )
+            val testConfig = ConfigFactory.parseMap(TestConfiguration.asMap(
+                kafkaEnvironment = kafkaEnvironment,
+                wireMockServer = wireMockServer,
+                redisServer = redisServer
+            ))
             val mergedConfig = testConfig.withFallback(fileConfig)
 
             return HoconApplicationConfig(mergedConfig)
@@ -86,7 +90,7 @@ class ApplicationTest {
         fun tearDown() {
             logger.info("Tearing down")
             wireMockServer.stop()
-            RedisMockUtil.stopRedisMocked()
+            redisServer.stop()
             logger.info("Tear down complete")
         }
     }
