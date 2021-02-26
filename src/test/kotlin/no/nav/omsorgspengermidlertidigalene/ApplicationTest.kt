@@ -10,10 +10,7 @@ import io.ktor.util.*
 import no.nav.common.KafkaEnvironment
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import no.nav.helse.getAuthCookie
-import no.nav.omsorgspengermidlertidigalene.felles.SØKER_URL
-import no.nav.omsorgspengermidlertidigalene.felles.SØKNAD_URL
-import no.nav.omsorgspengermidlertidigalene.felles.VALIDERING_URL
-import no.nav.omsorgspengermidlertidigalene.felles.somJson
+import no.nav.omsorgspengermidlertidigalene.felles.*
 import no.nav.omsorgspengermidlertidigalene.kafka.Topics
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.started
 import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
@@ -22,6 +19,7 @@ import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Medlemskap
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Situasjon
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Utenlandsopphold
 import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengerMidlertidigAleneApiConfig
+import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubOppslagHealth
 import org.json.JSONObject
@@ -34,9 +32,11 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 private const val gyldigFodselsnummerA = "290990123456"
+private const val gyldigFodselsnummerB = "25118921464"
 private const val ikkeMyndigFnr = "12125012345"
 
 @KtorExperimentalAPI
@@ -53,6 +53,7 @@ class ApplicationTest {
             .omsorgspengerMidlertidigAleneApiConfig()
             .build()
             .stubOppslagHealth()
+            .stubK9OppslagBarn()
             .stubK9OppslagSoker()
 
         val redisServer: RedisServer = RedisServer
@@ -152,6 +153,59 @@ class ApplicationTest {
                 }
             """.trimIndent()
         )
+    }
+
+    @Test
+    fun `Hente barn og sjekk eksplisit at identitetsnummer ikke blir med ved get kall`(){
+
+        val respons = requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = BARN_URL,
+            expectedCode = HttpStatusCode.OK,
+            //language=json
+            expectedResponse = """
+                {
+                  "barn": [
+                    {
+                      "fødselsdato": "2000-08-27",
+                      "fornavn": "BARN",
+                      "mellomnavn": "EN",
+                      "etternavn": "BARNESEN",
+                      "aktørId": "1000000000001"
+                    },
+                    {
+                      "fødselsdato": "2001-04-10",
+                      "fornavn": "BARN",
+                      "mellomnavn": "TO",
+                      "etternavn": "BARNESEN",
+                      "aktørId": "1000000000002"
+                    }
+                  ]
+                }
+            """.trimIndent()
+        )
+
+        val responsSomJSONArray = JSONObject(respons).getJSONArray("barn")
+
+        assertFalse(responsSomJSONArray.getJSONObject(0).has("identitetsnummer"))
+        assertFalse(responsSomJSONArray.getJSONObject(1).has("identitetsnummer"))
+    }
+
+    @Test
+    fun `Feil ved henting av barn skal returnere tom liste`() {
+        wireMockServer.stubK9OppslagBarn(simulerFeil = true)
+        requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = BARN_URL,
+            expectedCode = HttpStatusCode.OK,
+            expectedResponse = """
+            {
+                "barn": []
+            }
+            """.trimIndent(),
+            cookie = getAuthCookie(gyldigFodselsnummerB)
+        )
+        wireMockServer.stubK9OppslagBarn()
     }
 
     @Test
@@ -301,7 +355,8 @@ class ApplicationTest {
         expectedCode: HttpStatusCode,
         leggTilCookie: Boolean = true,
         cookie: Cookie = getAuthCookie(gyldigFodselsnummerA)
-    ) {
+    ): String? {
+        val respons: String?
         with(engine) {
             handleRequest(httpMethod, path) {
                 if (leggTilCookie) addHeader(HttpHeaders.Cookie, cookie.toString())
@@ -312,6 +367,7 @@ class ApplicationTest {
             }.apply {
                 logger.info("Response Entity = ${response.content}")
                 logger.info("Expected Entity = $expectedResponse")
+                respons = response.content
                 assertEquals(expectedCode, response.status())
                 if (expectedResponse != null) {
                     JSONAssert.assertEquals(expectedResponse, response.content!!, true)
@@ -320,6 +376,7 @@ class ApplicationTest {
                 }
             }
         }
+        return respons
     }
 
     private fun hentSøknadSendtTilProsessering(soknadId: String): JSONObject {

@@ -22,6 +22,9 @@ import no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages
 import no.nav.helse.dusseldorf.ktor.jackson.dusseldorfConfigured
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import no.nav.helse.dusseldorf.ktor.metrics.init
+import no.nav.omsorgspengermidlertidigalene.barn.BarnGateway
+import no.nav.omsorgspengermidlertidigalene.barn.BarnService
+import no.nav.omsorgspengermidlertidigalene.barn.barnApis
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenStatusPages
 import no.nav.omsorgspengermidlertidigalene.kafka.SøknadKafkaProducer
@@ -114,6 +117,16 @@ fun Application.omsorgpengermidlertidigaleneapi() {
             kafkaConfig = configuration.getKafkaConfig()
         )
 
+        val barnGateway = BarnGateway(
+            baseUrl = configuration.getK9OppslagUrl(),
+            apiGatewayApiKey = apiGatewayApiKey
+        )
+
+        val barnService = BarnService(
+            barnGateway = barnGateway,
+            cache = configuration.cache()
+        )
+
         environment.monitor.subscribe(ApplicationStopping) {
             logger.info("Stopper Kafka Producer.")
             søknadKafkaProducer.stop()
@@ -124,6 +137,11 @@ fun Application.omsorgpengermidlertidigaleneapi() {
 
             søkerApis(
                 søkerService = søkerService,
+                idTokenProvider = idTokenProvider
+            )
+
+            barnApis(
+                barnService = barnService,
                 idTokenProvider = idTokenProvider
             )
 
@@ -151,7 +169,8 @@ fun Application.omsorgpengermidlertidigaleneapi() {
         val healthService = HealthService(
             healthChecks = setOf(
                 søknadKafkaProducer,
-                søkerGateway
+                søkerGateway,
+                barnGateway
             )
         )
 

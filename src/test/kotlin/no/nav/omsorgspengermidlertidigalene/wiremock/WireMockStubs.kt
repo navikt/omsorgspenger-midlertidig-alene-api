@@ -6,12 +6,14 @@ import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.matching.AnythingPattern
 import io.ktor.http.*
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
+import no.nav.omsorgspengermidlertidigalene.barn.Barn
 
 internal const val k9OppslagPath = "/helse-reverse-proxy/k9-selvbetjening-oppslag-mock"
 
 internal fun WireMockBuilder.omsorgspengerMidlertidigAleneApiConfig() = wireMockConfiguration {
     it
         .extensions(SokerResponseTransformer())
+        .extensions(BarnResponseTransformer())
 }
 
 
@@ -30,6 +32,27 @@ internal fun WireMockServer.stubK9OppslagSoker() : WireMockServer {
                     .withHeader("Content-Type", "application/json")
                     .withStatus(200)
                     .withTransformers("k9-oppslag-soker")
+            )
+    )
+    return this
+}
+
+internal fun WireMockServer.stubK9OppslagBarn(simulerFeil: Boolean = false) : WireMockServer {
+    WireMock.stubFor(
+        WireMock.get(WireMock.urlPathMatching("$k9OppslagPath/.*"))
+            .withHeader("x-nav-apiKey", AnythingPattern())
+            .withHeader(HttpHeaders.Authorization, AnythingPattern())
+            .withQueryParam("a", equalTo("barn[].aktør_id"))
+            .withQueryParam("a", equalTo("barn[].fornavn"))
+            .withQueryParam("a", equalTo("barn[].mellomnavn"))
+            .withQueryParam("a", equalTo("barn[].etternavn"))
+            .withQueryParam("a", equalTo("barn[].fødselsdato"))
+            .withQueryParam("a", equalTo("barn[].identitetsnummer"))
+            .willReturn(
+                WireMock.aResponse()
+                    .withHeader("Content-Type", "application/json")
+                    .withStatus(if (simulerFeil) 500 else 200)
+                    .withTransformers("k9-oppslag-barn")
             )
     )
     return this
