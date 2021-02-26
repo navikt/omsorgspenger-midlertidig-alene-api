@@ -14,7 +14,7 @@ data class KomplettSøknad(
     val antallBarn: Int? = null, //TODO 26.02.2021 - Fjernes når frontend er prodsatt
     val fødselsårBarn: List<Int>? = null, //TODO 26.02.2021 - Fjernes når frontend er prodsatt
     val medlemskap: Medlemskap? = null, //TODO 26.02.2021 - Fjernes når frontend er prodsatt
-    val barn: List<BarnSøknad>,
+    val barn: List<Barn>,
     val harForståttRettigheterOgPlikter: Boolean,
     val harBekreftetOpplysninger: Boolean
 )

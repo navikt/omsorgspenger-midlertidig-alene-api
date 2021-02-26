@@ -13,11 +13,8 @@ import no.nav.helse.getAuthCookie
 import no.nav.omsorgspengermidlertidigalene.felles.*
 import no.nav.omsorgspengermidlertidigalene.kafka.Topics
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.started
-import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.AnnenForelder
-import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Medlemskap
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Situasjon
-import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Utenlandsopphold
 import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengerMidlertidigAleneApiConfig
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
@@ -28,7 +25,6 @@ import org.junit.BeforeClass
 import org.skyscreamer.jsonassert.JSONAssert
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -165,7 +161,7 @@ class ApplicationTest {
             //language=json
             expectedResponse = """
                 {
-                  "barn": [
+                  "barnOppslag": [
                     {
                       "fødselsdato": "2000-08-27",
                       "fornavn": "BARN",
@@ -185,7 +181,7 @@ class ApplicationTest {
             """.trimIndent()
         )
 
-        val responsSomJSONArray = JSONObject(respons).getJSONArray("barn")
+        val responsSomJSONArray = JSONObject(respons).getJSONArray("barnOppslag")
 
         assertFalse(responsSomJSONArray.getJSONObject(0).has("identitetsnummer"))
         assertFalse(responsSomJSONArray.getJSONObject(1).has("identitetsnummer"))
@@ -200,7 +196,7 @@ class ApplicationTest {
             expectedCode = HttpStatusCode.OK,
             expectedResponse = """
             {
-                "barn": []
+                "barnOppslag": []
             }
             """.trimIndent(),
             cookie = getAuthCookie(gyldigFodselsnummerB)

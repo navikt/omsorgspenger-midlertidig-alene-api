@@ -2,7 +2,7 @@ package no.nav.omsorgspengermidlertidigalene
 
 import no.nav.helse.dusseldorf.ktor.core.Throwblem
 import no.nav.omsorgspengermidlertidigalene.felles.starterMedFodselsdato
-import no.nav.omsorgspengermidlertidigalene.søknad.søknad.BarnSøknad
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Barn
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.valider
 import org.junit.Ignore
 import org.junit.Test
@@ -66,7 +66,7 @@ internal class SøknadValideringsTest {
     fun `Feiler dersom barn ikke har identitetsnummer`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
             barn = listOf(
-                BarnSøknad(
+                Barn(
                     navn = "Ole Dole Doffen",
                     aktørId = null,
                     identitetsnummer = null
@@ -80,7 +80,7 @@ internal class SøknadValideringsTest {
     fun `Feiler dersom barn ikke har gyldig identitetsnummer`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
             barn = listOf(
-                BarnSøknad(
+                Barn(
                     navn = "Ole Dole Doffen",
                     aktørId = null,
                     identitetsnummer = "ikke gyldig"
@@ -94,7 +94,7 @@ internal class SøknadValideringsTest {
     fun `Feiler dersom barn ikke har navn`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
             barn = listOf(
-                BarnSøknad(
+                Barn(
                     navn = "",
                     aktørId = "12345",
                     identitetsnummer = "12345"

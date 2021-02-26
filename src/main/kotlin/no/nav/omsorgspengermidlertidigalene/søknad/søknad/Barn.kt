@@ -4,7 +4,7 @@ import no.nav.helse.dusseldorf.ktor.core.ParameterType
 import no.nav.helse.dusseldorf.ktor.core.Violation
 import no.nav.omsorgspengermidlertidigalene.felles.gyldigNorskIdentifikator
 
-data class BarnSøknad (
+data class Barn (
     val navn: String,
     val aktørId: String?,
     var identitetsnummer: String?,

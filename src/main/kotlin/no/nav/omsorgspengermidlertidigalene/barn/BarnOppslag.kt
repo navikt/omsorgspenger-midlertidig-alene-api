@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.LocalDate
 
 data class BarnResponse(
-    val barn: List<Barn>
+    val barnOppslag: List<BarnOppslag>
 )
 
-data class Barn (
+data class BarnOppslag (
     val fødselsdato: LocalDate,
     val fornavn: String?,
     val mellomnavn: String?,
