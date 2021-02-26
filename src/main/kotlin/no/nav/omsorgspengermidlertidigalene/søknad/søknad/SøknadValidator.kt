@@ -48,17 +48,6 @@ internal fun Søknad.valider() {
         )
     }
 
-    if(arbeidssituasjon.isEmpty()){
-        mangler.add(
-            Violation(
-                parameterName = "arbeidssituasjon",
-                parameterType = ParameterType.ENTITY,
-                reason = "arbeidssituasjon kan ikke være tom",
-                invalidValue = arbeidssituasjon
-            )
-        )
-    }
-
     fødselsårBarn.forEachIndexed{ index: Int, fødselsår: Int ->
         val årstallNå = LocalDate.now().year
         if(fødselsår > årstallNå){
@@ -74,7 +63,6 @@ internal fun Søknad.valider() {
     }
 
     mangler.addAll(annenForelder.valider())
-    mangler.addAll(medlemskap.valider())
 
     if (mangler.isNotEmpty()) {
         throw Throwblem(ValidationProblemDetails(mangler))

@@ -10,11 +10,11 @@ data class Søknad(
     val søknadId: String = UUID.randomUUID().toString(),
     val id: String,
     val språk: String,
-    val arbeidssituasjon: List<Arbeidssituasjon>,
+    val arbeidssituasjon: List<Arbeidssituasjon>? = null, //TODO 26.02.2021 - Fjernes når frontend er prodsatt
     val annenForelder: AnnenForelder,
     val antallBarn: Int,
     val fødselsårBarn: List<Int>,
-    val medlemskap: Medlemskap,
+    val medlemskap: Medlemskap? = null, //TODO 26.02.2021 - Fjernes når frontend er prodsatt
     val harForståttRettigheterOgPlikter: Boolean,
     val harBekreftetOpplysninger: Boolean
 ) {
