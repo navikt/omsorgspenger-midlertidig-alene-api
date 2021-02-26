@@ -1,6 +1,7 @@
 package no.nav.omsorgspengermidlertidigalene.søknad.søknad
 
 import com.fasterxml.jackson.annotation.JsonAlias
+import no.nav.omsorgspengermidlertidigalene.barn.Barn
 import no.nav.omsorgspengermidlertidigalene.søker.Søker
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -12,9 +13,10 @@ data class Søknad(
     val språk: String,
     val arbeidssituasjon: List<Arbeidssituasjon>? = null, //TODO 26.02.2021 - Fjernes når frontend er prodsatt
     val annenForelder: AnnenForelder,
-    val antallBarn: Int,
-    val fødselsårBarn: List<Int>,
+    val antallBarn: Int? = null, //TODO 26.02.2021 - Fjernes når frontend er prodsatt
+    val fødselsårBarn: List<Int>? = null, //TODO 26.02.2021 - Fjernes når frontend er prodsatt
     val medlemskap: Medlemskap? = null, //TODO 26.02.2021 - Fjernes når frontend er prodsatt
+    val barn: List<BarnSøknad> = listOf(),
     val harForståttRettigheterOgPlikter: Boolean,
     val harBekreftetOpplysninger: Boolean
 ) {
@@ -29,10 +31,18 @@ data class Søknad(
             antallBarn = antallBarn,
             fødselsårBarn = fødselsårBarn,
             medlemskap = medlemskap,
+            barn = barn,
             harBekreftetOpplysninger = harBekreftetOpplysninger,
             harForståttRettigheterOgPlikter = harForståttRettigheterOgPlikter
         )
 
+    fun oppdaterBarnMedFnr(listeOverBarn: List<Barn>) {
+        barn.forEach { barn ->
+            if (barn.manglerIdentitetsnummer()) {
+                barn oppdaterIdentitetsnummerMed listeOverBarn.hentIdentitetsnummerForBarn(barn.aktørId)
+            }
+        }
+    }
 }
 
 enum class Arbeidssituasjon(){
@@ -40,4 +50,10 @@ enum class Arbeidssituasjon(){
     @JsonAlias("arbeidstaker") ARBEIDSTAKER,
     @JsonAlias("frilanser") FRILANSER,
     @JsonAlias("annen") ANNEN
+}
+
+private fun List<Barn>.hentIdentitetsnummerForBarn(aktørId: String?): String? {
+    return find {
+        it.aktørId == aktørId
+    }?.identitetsnummer
 }
