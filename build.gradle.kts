@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val dusseldorfKtorVersion = "1.5.1.870aa75"
 val ktorVersion = ext.get("ktorVersion").toString()
 val mainClass = "no.nav.omsorgspengermidlertidigalene.AppKt"
-val kafkaEmbeddedEnvVersion = "2.4.0"
+val kafkaEmbeddedEnvVersion = "2.7.0"
 val kafkaVersion = "2.4.0" // Alligned med version fra kafka-embedded-env
 
 plugins {
