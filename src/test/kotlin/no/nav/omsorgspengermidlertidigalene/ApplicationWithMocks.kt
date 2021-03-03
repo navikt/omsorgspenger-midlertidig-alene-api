@@ -6,6 +6,7 @@ import no.nav.helse.dusseldorf.testsupport.asArguments
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.started
 import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengerMidlertidigAleneApiConfig
+import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubOppslagHealth
 import org.slf4j.Logger
@@ -28,6 +29,7 @@ class ApplicationWithMocks {
                 .build()
                 .stubOppslagHealth()
                 .stubK9OppslagSoker()
+                .stubK9OppslagBarn()
 
             val redisServer: RedisServer = RedisServer
                 .newRedisServer(6379)

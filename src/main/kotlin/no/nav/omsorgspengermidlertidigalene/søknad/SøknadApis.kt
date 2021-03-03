@@ -6,6 +6,7 @@ import io.ktor.locations.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import no.nav.omsorgspengermidlertidigalene.barn.BarnService
 import no.nav.omsorgspengermidlertidigalene.felles.SØKNAD_URL
 import no.nav.omsorgspengermidlertidigalene.felles.VALIDERING_URL
 import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
@@ -22,6 +23,7 @@ private val logger: Logger = LoggerFactory.getLogger("nav.soknadApis")
 @KtorExperimentalLocationsAPI
 fun Route.søknadApis(
     søknadService: SøknadService,
+    barnService: BarnService,
     idTokenProvider: IdTokenProvider
 ) {
 
@@ -34,6 +36,11 @@ fun Route.søknadApis(
         logger.trace("Mapper søknad")
         val søknad = call.receive<Søknad>()
         logger.trace("Søknad mappet.")
+
+        logger.trace("Oppdaterer barn med identitetsnummer")
+        val listeOverBarnMedFnr = barnService.hentNåværendeBarn(idTokenProvider.getIdToken(call), call.getCallId())
+        søknad.oppdaterBarnMedFnr(listeOverBarnMedFnr)
+        logger.info("Oppdatering av identitetsnummer på barn OK")
 
         logger.trace("Validerer søknad")
         søknad.valider()

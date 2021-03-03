@@ -10,18 +10,13 @@ import io.ktor.util.*
 import no.nav.common.KafkaEnvironment
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import no.nav.helse.getAuthCookie
-import no.nav.omsorgspengermidlertidigalene.felles.SØKER_URL
-import no.nav.omsorgspengermidlertidigalene.felles.SØKNAD_URL
-import no.nav.omsorgspengermidlertidigalene.felles.VALIDERING_URL
-import no.nav.omsorgspengermidlertidigalene.felles.somJson
+import no.nav.omsorgspengermidlertidigalene.felles.*
 import no.nav.omsorgspengermidlertidigalene.kafka.Topics
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.started
-import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.AnnenForelder
-import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Medlemskap
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Situasjon
-import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Utenlandsopphold
 import no.nav.omsorgspengermidlertidigalene.wiremock.omsorgspengerMidlertidigAleneApiConfig
+import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagBarn
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubOppslagHealth
 import org.json.JSONObject
@@ -30,13 +25,14 @@ import org.junit.BeforeClass
 import org.skyscreamer.jsonassert.JSONAssert
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 private const val gyldigFodselsnummerA = "290990123456"
+private const val gyldigFodselsnummerB = "25118921464"
 private const val ikkeMyndigFnr = "12125012345"
 
 @KtorExperimentalAPI
@@ -53,6 +49,7 @@ class ApplicationTest {
             .omsorgspengerMidlertidigAleneApiConfig()
             .build()
             .stubOppslagHealth()
+            .stubK9OppslagBarn()
             .stubK9OppslagSoker()
 
         val redisServer: RedisServer = RedisServer
@@ -155,6 +152,59 @@ class ApplicationTest {
     }
 
     @Test
+    fun `Hente barn og sjekk eksplisit at identitetsnummer ikke blir med ved get kall`(){
+
+        val respons = requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = BARN_URL,
+            expectedCode = HttpStatusCode.OK,
+            //language=json
+            expectedResponse = """
+                {
+                  "barnOppslag": [
+                    {
+                      "fødselsdato": "2000-08-27",
+                      "fornavn": "BARN",
+                      "mellomnavn": "EN",
+                      "etternavn": "BARNESEN",
+                      "aktørId": "1000000000001"
+                    },
+                    {
+                      "fødselsdato": "2001-04-10",
+                      "fornavn": "BARN",
+                      "mellomnavn": "TO",
+                      "etternavn": "BARNESEN",
+                      "aktørId": "1000000000002"
+                    }
+                  ]
+                }
+            """.trimIndent()
+        )
+
+        val responsSomJSONArray = JSONObject(respons).getJSONArray("barnOppslag")
+
+        assertFalse(responsSomJSONArray.getJSONObject(0).has("identitetsnummer"))
+        assertFalse(responsSomJSONArray.getJSONObject(1).has("identitetsnummer"))
+    }
+
+    @Test
+    fun `Feil ved henting av barn skal returnere tom liste`() {
+        wireMockServer.stubK9OppslagBarn(simulerFeil = true)
+        requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = BARN_URL,
+            expectedCode = HttpStatusCode.OK,
+            expectedResponse = """
+            {
+                "barnOppslag": []
+            }
+            """.trimIndent(),
+            cookie = getAuthCookie(gyldigFodselsnummerB)
+        )
+        wireMockServer.stubK9OppslagBarn()
+    }
+
+    @Test
     fun `Sende gyldig melding til validering`(){
         val søknad = SøknadUtils.gyldigSøknad.somJson()
 
@@ -245,66 +295,6 @@ class ApplicationTest {
     }
 
     @Test
-    fun `Sende søknad som inneholder ugydlig medlemskap`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            medlemskap = Medlemskap(
-                harBoddIUtlandetSiste12Mnd = true,
-                utenlandsoppholdSiste12Mnd = listOf(
-                    Utenlandsopphold(
-                        fraOgMed = LocalDate.parse("2020-01-01"),
-                        tilOgMed = LocalDate.parse("2020-01-10"),
-                        landkode = "Sverige",
-                        landnavn = "SWE"
-                    ),
-                    Utenlandsopphold(
-                        fraOgMed = LocalDate.parse("2020-01-10"),
-                        tilOgMed = LocalDate.parse("2020-01-09"),
-                        landkode = " ",
-                        landnavn = " "
-                    )
-                ),
-                skalBoIUtlandetNeste12Mnd = false
-            )
-        )
-
-        requestAndAssert(
-            httpMethod = HttpMethod.Post,
-            path = SØKNAD_URL,
-            expectedResponse = """
-                {
-                  "detail": "Requesten inneholder ugyldige paramtere.",
-                  "instance": "about:blank",
-                  "type": "/problem-details/invalid-request-parameters",
-                  "title": "invalid-request-parameters",
-                  "invalid_parameters": [
-                    {
-                      "name": "medlemskap.utenlandsoppholdSiste12Mnd[1].tilOgMed",
-                      "reason": "tilOgMed kan ikke være før fraOgMed",
-                      "invalid_value": "2020-01-09",
-                      "type": "entity"
-                    },
-                    {
-                      "name": "medlemskap.utenlandsoppholdSiste12Mnd[1].landkode",
-                      "reason": "Landkode er ikke gyldig",
-                      "invalid_value": " ",
-                      "type": "entity"
-                    },
-                    {
-                      "name": "medlemskap.utenlandsoppholdSiste12Mnd[1].landnavn",
-                      "reason": "Landnavn er ikke gyldig",
-                      "invalid_value": " ",
-                      "type": "entity"
-                    }
-                  ],
-                  "status": 400
-                }
-            """.trimIndent(),
-            expectedCode = HttpStatusCode.BadRequest,
-            requestEntity = søknad.somJson()
-        )
-    }
-
-    @Test
     fun `Sende søknad som inneholder annenForelder som er ugyldig`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
             annenForelder = AnnenForelder(
@@ -353,91 +343,6 @@ class ApplicationTest {
         )
     }
 
-    @Test
-    fun `Sende søknad som inneholder null feil på alle bolske verdier`(){
-        val søknadSomJson = """
-            {
-              "id": "123456789",
-              "språk": "nb",
-              "arbeidssituasjon": [
-                "FRILANSER"
-              ],
-              "annenForelder": {
-                "navn": "Berit",
-                "fnr": "02119970078",
-                "situasjon": "FENGSEL",
-                "situasjonBeskrivelse": "Sitter i fengsel..",
-                "periodeOver6Måneder": null,
-                "periodeFraOgMed": "2020-01-01",
-                "periodeTilOgMed": "2020-10-01"
-              },
-              "antallBarn": 2,
-              "fødselsårBarn": [
-                5,
-                3
-              ],
-              "medlemskap": {
-                "harBoddIUtlandetSiste12Mnd": null,
-                "utenlandsoppholdSiste12Mnd": [
-                  {
-                    "fraOgMed": "2020-01-01",
-                    "tilOgMed": "2020-01-10",
-                    "landkode": "DE",
-                    "landnavn": "Tyskland"
-                  },
-                  {
-                    "fraOgMed": "2020-01-01",
-                    "tilOgMed": "2020-01-10",
-                    "landkode": "SWE",
-                    "landnavn": "Sverige"
-                  }
-                ],
-                "skalBoIUtlandetNeste12Mnd": null,
-                "utenlandsoppholdNeste12Mnd": [
-                  {
-                    "fraOgMed": "2020-10-01",
-                    "tilOgMed": "2020-10-10",
-                    "landkode": "BR",
-                    "landnavn": "Brasil"
-                  }
-                ]
-              },
-              "harForståttRettigheterOgPlikter": true,
-              "harBekreftetOpplysninger": true
-            }
-        """.trimIndent()
-
-        requestAndAssert(
-            httpMethod = HttpMethod.Post,
-            path = SØKNAD_URL,
-            expectedResponse = """
-                {
-                  "detail": "Requesten inneholder ugyldige paramtere.",
-                  "instance": "about:blank",
-                  "type": "/problem-details/invalid-request-parameters",
-                  "title": "invalid-request-parameters",
-                  "invalid_parameters": [
-                    {
-                      "type": "entity",
-                      "name": "harBoddIUtlandetSiste12Mnd",
-                      "reason": "harBoddIUtlandetSiste12Mnd kan ikke være null",
-                      "invalid_value": null
-                    },
-                    {
-                      "type": "entity",
-                      "name": "skalBoIUtlandetNeste12Mnd",
-                      "reason": "skalBoIUtlandetNeste12Mnd kan ikke være null",
-                      "invalid_value": null
-                    }
-                  ],
-                  "status": 400
-                }
-            """.trimIndent(),
-            expectedCode = HttpStatusCode.BadRequest,
-            requestEntity = søknadSomJson
-        )
-    }
-
     private fun requestAndAssert(
         httpMethod: HttpMethod,
         path: String,
@@ -446,7 +351,8 @@ class ApplicationTest {
         expectedCode: HttpStatusCode,
         leggTilCookie: Boolean = true,
         cookie: Cookie = getAuthCookie(gyldigFodselsnummerA)
-    ) {
+    ): String? {
+        val respons: String?
         with(engine) {
             handleRequest(httpMethod, path) {
                 if (leggTilCookie) addHeader(HttpHeaders.Cookie, cookie.toString())
@@ -457,6 +363,7 @@ class ApplicationTest {
             }.apply {
                 logger.info("Response Entity = ${response.content}")
                 logger.info("Expected Entity = $expectedResponse")
+                respons = response.content
                 assertEquals(expectedCode, response.status())
                 if (expectedResponse != null) {
                     JSONAssert.assertEquals(expectedResponse, response.content!!, true)
@@ -465,6 +372,7 @@ class ApplicationTest {
                 }
             }
         }
+        return respons
     }
 
     private fun hentSøknadSendtTilProsessering(soknadId: String): JSONObject {

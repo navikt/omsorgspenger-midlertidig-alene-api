@@ -1,11 +1,11 @@
 package no.nav.omsorgspengermidlertidigalene
 
 import no.nav.helse.dusseldorf.ktor.core.Throwblem
-import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Utenlandsopphold
-import no.nav.omsorgspengermidlertidigalene.søknad.søknad.starterMedFodselsdato
+import no.nav.omsorgspengermidlertidigalene.felles.starterMedFodselsdato
+import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Barn
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.valider
+import org.junit.Ignore
 import org.junit.Test
-import java.time.LocalDate
 import kotlin.test.assertTrue
 
 internal class SøknadValideringsTest {
@@ -24,13 +24,6 @@ internal class SøknadValideringsTest {
     fun `Gyldig søknad`() {
         val søknad = SøknadUtils.gyldigSøknad
         søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom antall barn er 0 eller mindre`(){
-        SøknadUtils.gyldigSøknad.copy(
-            antallBarn = 0
-        ).valider()
     }
 
     @Test(expected = Throwblem::class)
@@ -69,111 +62,53 @@ internal class SøknadValideringsTest {
         søknad.valider()
     }
 
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom fødselsår på barn er høyere enn året vi er i`(){
+    @Test(expected =  Throwblem::class)
+    fun `Feiler dersom barn ikke har identitetsnummer`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
-            fødselsårBarn = listOf(
-                LocalDate.now().year.plus(1)
-            )
-        )
-        søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom medlemskap har et Utenlandsopphold som har ugydlig landnavn`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            medlemskap = SøknadUtils.gyldigSøknad.medlemskap.copy(
-                utenlandsoppholdNeste12Mnd = listOf(
-                    Utenlandsopphold(
-                        fraOgMed = LocalDate.now(),
-                        tilOgMed = LocalDate.now().plusDays(1),
-                        landnavn = "  ",
-                        landkode = "GE"
-                    )
+            barn = listOf(
+                Barn(
+                    navn = "Ole Dole Doffen",
+                    aktørId = null,
+                    identitetsnummer = null
                 )
             )
         )
         søknad.valider()
     }
 
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom medlemskap har et Utenlandsopphold som har ugydlig landkode`(){
+    @Test(expected =  Throwblem::class)
+    fun `Feiler dersom barn ikke har gyldig identitetsnummer`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
-            medlemskap = SøknadUtils.gyldigSøknad.medlemskap.copy(
-                utenlandsoppholdNeste12Mnd = listOf(
-                    Utenlandsopphold(
-                        fraOgMed = LocalDate.now(),
-                        tilOgMed = LocalDate.now().plusDays(1),
-                        landnavn = "Sverige",
-                        landkode = " "
-                    )
+            barn = listOf(
+                Barn(
+                    navn = "Ole Dole Doffen",
+                    aktørId = null,
+                    identitetsnummer = "ikke gyldig"
                 )
             )
         )
         søknad.valider()
     }
 
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom medlemskap har et Utenlandsopphold hvor fraOgMed er etter tilOgMed`(){
+    @Test(expected =  Throwblem::class)
+    fun `Feiler dersom barn ikke har navn`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
-            medlemskap = SøknadUtils.gyldigSøknad.medlemskap.copy(
-                utenlandsoppholdNeste12Mnd = listOf(
-                    Utenlandsopphold(
-                        fraOgMed = LocalDate.now(),
-                        tilOgMed = LocalDate.now().minusDays(1),
-                        landnavn = "Sverige",
-                        landkode = "SWE"
-                    )
+            barn = listOf(
+                Barn(
+                    navn = "",
+                    aktørId = "12345",
+                    identitetsnummer = "12345"
                 )
             )
         )
         søknad.valider()
     }
 
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom medlemskap har harBoddIUtlandetSiste12Mnd til true men listen er tom `(){
+    @Ignore //TODO 26.02.2021 - Skru på når frontend er prodsatt
+    @Test(expected =  Throwblem::class)
+    fun `Feiler dersom barn er tom liste`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(
-            medlemskap = SøknadUtils.gyldigSøknad.medlemskap.copy(
-                skalBoIUtlandetNeste12Mnd = true,
-                utenlandsoppholdNeste12Mnd = listOf()
-            )
-        )
-        søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom medlemskap har harBoddIUtlandetSiste12Mnd til false men listen inneholder et element`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            medlemskap = SøknadUtils.gyldigSøknad.medlemskap.copy(
-                skalBoIUtlandetNeste12Mnd = false,
-                utenlandsoppholdNeste12Mnd = listOf(
-                    Utenlandsopphold(
-                        fraOgMed = LocalDate.now(),
-                        tilOgMed = LocalDate.now().plusDays(1),
-                        landnavn = "Sverige",
-                        landkode = "SWE"
-                    )
-                )
-            )
-        )
-        søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom medlemskap har harBoddIUtlandetSiste12Mnd til null`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            medlemskap = SøknadUtils.gyldigSøknad.medlemskap.copy(
-                skalBoIUtlandetNeste12Mnd = null,
-                utenlandsoppholdNeste12Mnd = listOf()
-            )
-        )
-        søknad.valider()
-    }
-
-    @Test(expected = Throwblem::class)
-    fun `Skal feile dersom arbedissituasjon er tom`(){
-        val søknad = SøknadUtils.gyldigSøknad.copy(
-            arbeidssituasjon = listOf()
+            barn = listOf()
         )
         søknad.valider()
     }

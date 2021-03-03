@@ -3,6 +3,7 @@ package no.nav.omsorgspengermidlertidigalene.søknad.søknad
 import com.fasterxml.jackson.annotation.JsonFormat
 import no.nav.helse.dusseldorf.ktor.core.ParameterType
 import no.nav.helse.dusseldorf.ktor.core.Violation
+import no.nav.omsorgspengermidlertidigalene.felles.gyldigNorskIdentifikator
 import java.time.LocalDate
 
 data class AnnenForelder(
