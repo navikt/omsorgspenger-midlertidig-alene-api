@@ -4,7 +4,6 @@ import no.nav.helse.dusseldorf.ktor.core.Throwblem
 import no.nav.omsorgspengermidlertidigalene.felles.starterMedFodselsdato
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Barn
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.valider
-import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertTrue
 
@@ -104,7 +103,6 @@ internal class SøknadValideringsTest {
         søknad.valider()
     }
 
-    @Ignore //TODO 26.02.2021 - Skru på når frontend er prodsatt
     @Test(expected =  Throwblem::class)
     fun `Feiler dersom barn er tom liste`(){
         val søknad = SøknadUtils.gyldigSøknad.copy(

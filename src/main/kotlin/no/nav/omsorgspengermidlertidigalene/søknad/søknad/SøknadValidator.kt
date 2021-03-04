@@ -4,8 +4,6 @@ import no.nav.helse.dusseldorf.ktor.core.ParameterType
 import no.nav.helse.dusseldorf.ktor.core.Throwblem
 import no.nav.helse.dusseldorf.ktor.core.ValidationProblemDetails
 import no.nav.helse.dusseldorf.ktor.core.Violation
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 internal fun Søknad.valider() {
     val mangler: MutableSet<Violation> = mutableSetOf()
@@ -32,7 +30,6 @@ internal fun Søknad.valider() {
         )
     }
 
-    /* //TODO 26.02.2021 - Sett på når frontend er prodsatt
     if(barn.isEmpty()){
         mangler.add(
             Violation(
@@ -43,7 +40,6 @@ internal fun Søknad.valider() {
             )
         )
     }
-     */
 
     barn.mapIndexed { index, barnSøknad -> mangler.addAll(barnSøknad.valider(index)) }
 
