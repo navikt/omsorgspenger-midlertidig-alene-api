@@ -4,7 +4,6 @@ import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Healthy
 import no.nav.helse.dusseldorf.ktor.health.Result
 import no.nav.helse.dusseldorf.ktor.health.UnHealthy
-import no.nav.k9.søknad.JsonUtils
 import no.nav.omsorgspengermidlertidigalene.felles.Metadata
 import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
 import no.nav.omsorgspengermidlertidigalene.felles.somJson
@@ -39,7 +38,6 @@ class SøknadKafkaProducer(
         metadata: Metadata
     ) {
         if (metadata.version != 1) throw IllegalStateException("Kan ikke legge søknad med versjon ${metadata.version} til prosessering.")
-        logger.info("SKAL IKKE VISES I PROD: K9Format: {}", JsonUtils.toString(søknad.k9Format)) //TODO 05.03.2021 - Fjerne før prodsetting
         val recordMetaData = producer.send(
             ProducerRecord(
                 OMS_MIDLERTIDIG_ALENE_MOTTATT_TOPIC.name,
