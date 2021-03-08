@@ -389,7 +389,9 @@ class ApplicationTest {
         assertTrue(søknadPlukketFraTopic.has("mottatt"))
         søknadPlukketFraTopic.remove("mottatt") //Fjerner mottatt siden det settes i komplettSøknad
 
-        JSONAssert.assertEquals(søknadSendtInn, søknadPlukketFraTopic, true)
+        søknadPlukketFraTopic.remove("k9Format") //Fjerner k9Format
+
+        JSONAssert.assertEquals(søknadSendtInn, søknadPlukketFraTopic,  true)
 
         logger.info("Verifisering OK")
     }

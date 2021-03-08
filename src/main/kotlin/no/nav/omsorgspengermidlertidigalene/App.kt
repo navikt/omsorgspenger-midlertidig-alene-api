@@ -161,6 +161,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
             søknadApis(
                 idTokenProvider = idTokenProvider,
                 barnService = barnService,
+                søkerService = søkerService,
                 søknadService = SøknadService(
                     søkerService = søkerService,
                     kafkaProducer = søknadKafkaProducer

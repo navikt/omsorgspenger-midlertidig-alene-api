@@ -4,8 +4,9 @@ import no.nav.helse.dusseldorf.ktor.core.ParameterType
 import no.nav.helse.dusseldorf.ktor.core.Throwblem
 import no.nav.helse.dusseldorf.ktor.core.ValidationProblemDetails
 import no.nav.helse.dusseldorf.ktor.core.Violation
+import no.nav.k9.søknad.ytelse.omsorgspenger.utvidetrett.v1.OmsorgspengerMidlertidigAlene
 
-internal fun Søknad.valider() {
+internal fun Søknad.valider(k9Format: no.nav.k9.søknad.Søknad) {
     val mangler: MutableSet<Violation> = mutableSetOf()
 
     if (harBekreftetOpplysninger er false) {
@@ -44,10 +45,30 @@ internal fun Søknad.valider() {
     barn.mapIndexed { index, barnSøknad -> mangler.addAll(barnSøknad.valider(index)) }
 
     mangler.addAll(annenForelder.valider())
+    mangler.addAll(k9Format.valider())
+
+    mangler.sortedBy { it.reason }
 
     if (mangler.isNotEmpty()) {
         throw Throwblem(ValidationProblemDetails(mangler))
     }
+}
+
+fun no.nav.k9.søknad.Søknad.valider(): MutableSet<Violation> {
+    val mangler: MutableSet<Violation> = mutableSetOf<Violation>()
+
+    OmsorgspengerMidlertidigAlene().validator.valider(getYtelse<OmsorgspengerMidlertidigAlene>()).forEach {
+        mangler.add(
+            Violation(
+                parameterName = it.felt,
+                parameterType = ParameterType.ENTITY,
+                reason = it.feilmelding,
+                invalidValue = "k9-format feilkode: ${it.feilkode}"
+            )
+        )
+    }
+
+    return mangler
 }
 
 internal fun nullSjekk(verdi: Boolean?, navn: String): MutableSet<Violation>{

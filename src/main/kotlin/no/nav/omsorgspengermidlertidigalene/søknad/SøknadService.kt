@@ -2,15 +2,13 @@ package no.nav.omsorgspengermidlertidigalene.søknad
 
 import no.nav.omsorgspengermidlertidigalene.felles.Metadata
 import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
-import no.nav.omsorgspengermidlertidigalene.general.CallId
-import no.nav.omsorgspengermidlertidigalene.general.auth.IdToken
 import no.nav.omsorgspengermidlertidigalene.kafka.SøknadKafkaProducer
 import no.nav.omsorgspengermidlertidigalene.søker.Søker
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerService
-import no.nav.omsorgspengermidlertidigalene.søker.validate
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Søknad
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.time.ZonedDateTime
 
 
 class SøknadService(
@@ -25,22 +23,13 @@ class SøknadService(
     suspend fun registrer(
         søknad: Søknad,
         metadata: Metadata,
-        idToken: IdToken,
-        callId: CallId
+        mottatt: ZonedDateTime,
+        søker: Søker,
+        k9Format: no.nav.k9.søknad.Søknad
     ) {
         logger.info(formaterStatuslogging(søknad.søknadId, "registreres"))
 
-        logger.trace("Henter søker")
-        val søker: Søker = søkerService.getSøker(idToken = idToken, callId = callId)
-        logger.trace("Søker hentet.")
-
-        logger.info("AktørID: ${søker.aktørId}")
-
-        logger.trace("Validerer søker.")
-        søker.validate()
-        logger.trace("Søker OK.")
-
-        val komplettSøknad = søknad.tilKomplettSøknad(søker)
+        val komplettSøknad = søknad.tilKomplettSøknad(søker, mottatt, k9Format)
 
         kafkaProducer.produce(søknad = komplettSøknad, metadata = metadata)
     }

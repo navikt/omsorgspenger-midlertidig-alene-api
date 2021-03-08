@@ -6,6 +6,7 @@ val ktorVersion = ext.get("ktorVersion").toString()
 val mainClass = "no.nav.omsorgspengermidlertidigalene.AppKt"
 val kafkaEmbeddedEnvVersion = "2.4.0"
 val kafkaVersion = "2.4.0" // Alligned med version fra kafka-embedded-env
+val k9FormatVersion = "5.1.17"
 
 plugins {
     kotlin("jvm") version "1.4.30"
@@ -19,17 +20,17 @@ buildscript {
 
 dependencies {
     // Server
-    implementation ( "no.nav.helse:dusseldorf-ktor-core:$dusseldorfKtorVersion")
-    implementation ( "no.nav.helse:dusseldorf-ktor-jackson:$dusseldorfKtorVersion")
-    implementation ( "no.nav.helse:dusseldorf-ktor-metrics:$dusseldorfKtorVersion")
-    implementation ( "no.nav.helse:dusseldorf-ktor-health:$dusseldorfKtorVersion")
-    implementation ( "no.nav.helse:dusseldorf-ktor-auth:$dusseldorfKtorVersion")
+    implementation("no.nav.helse:dusseldorf-ktor-core:$dusseldorfKtorVersion")
+    implementation("no.nav.helse:dusseldorf-ktor-jackson:$dusseldorfKtorVersion")
+    implementation("no.nav.helse:dusseldorf-ktor-metrics:$dusseldorfKtorVersion")
+    implementation("no.nav.helse:dusseldorf-ktor-health:$dusseldorfKtorVersion")
+    implementation("no.nav.helse:dusseldorf-ktor-auth:$dusseldorfKtorVersion")
     implementation("io.ktor:ktor-locations:$ktorVersion")
 
     // Client
-    implementation ( "no.nav.helse:dusseldorf-ktor-client:$dusseldorfKtorVersion")
-    implementation ( "no.nav.helse:dusseldorf-oauth2-client:$dusseldorfKtorVersion")
-    implementation ("io.lettuce:lettuce-core:5.3.5.RELEASE")
+    implementation("no.nav.helse:dusseldorf-ktor-client:$dusseldorfKtorVersion")
+    implementation("no.nav.helse:dusseldorf-oauth2-client:$dusseldorfKtorVersion")
+    implementation("io.lettuce:lettuce-core:5.3.5.RELEASE")
     implementation("com.github.fppt:jedis-mock:0.1.16")
 
     // Test
@@ -39,10 +40,14 @@ dependencies {
         exclude(group = "org.eclipse.jetty")
     }
 
+    //K9-format
+    implementation("no.nav.k9:soknad:$k9FormatVersion")
+    implementation("org.glassfish:jakarta.el:3.0.3")
+
     // kafka
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
 
-    testImplementation ("org.skyscreamer:jsonassert:1.5.0")
+    testImplementation("org.skyscreamer:jsonassert:1.5.0")
     testImplementation("org.awaitility:awaitility-kotlin:4.0.3")
 }
 
@@ -85,9 +90,9 @@ tasks.withType<ShadowJar> {
     archiveClassifier.set("")
     manifest {
         attributes(
-                mapOf(
-                        "Main-Class" to mainClass
-                )
+            mapOf(
+                "Main-Class" to mainClass
+            )
         )
     }
 }
