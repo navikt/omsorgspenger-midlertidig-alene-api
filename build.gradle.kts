@@ -9,7 +9,7 @@ val kafkaVersion = "2.4.0" // Alligned med version fra kafka-embedded-env
 val k9FormatVersion = "5.1.30"
 
 plugins {
-    kotlin("jvm") version "1.4.30"
+    kotlin("jvm") version "1.4.32"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
