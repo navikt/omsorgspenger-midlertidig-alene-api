@@ -43,7 +43,8 @@ class K9FormatTest {
                       "situasjon": "FENGSEL",
                       "situasjonBeskrivelse": "Sitter i fengsel..",
                       "periode": "2020-01-01/2020-10-01"
-                    }
+                    },
+                    "begrunnelse": null
                   }
                 }
         """.trimIndent()

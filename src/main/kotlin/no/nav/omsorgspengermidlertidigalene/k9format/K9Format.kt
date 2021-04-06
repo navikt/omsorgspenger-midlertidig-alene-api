@@ -23,7 +23,8 @@ fun Søknad.tilK9Format(mottatt: ZonedDateTime, søker: Søker): K9Søknad {
         søker.tilK9Søker(),
         OmsorgspengerMidlertidigAlene(
             barn.tilK9Barn(),
-            annenForelder.tilK9AnnenForelder()
+            annenForelder.tilK9AnnenForelder(),
+            null
         )
     )
 }
