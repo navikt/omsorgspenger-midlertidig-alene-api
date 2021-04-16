@@ -53,7 +53,7 @@ class ApplicationTest {
             .stubK9OppslagSoker()
 
         val redisServer: RedisServer = RedisServer
-            .newRedisServer(6379).started()
+            .newRedisServer().started()
 
         private val kafkaEnvironment = KafkaWrapper.bootstrap()
         private val kafkaTestConsumer = kafkaEnvironment.testConsumer()
