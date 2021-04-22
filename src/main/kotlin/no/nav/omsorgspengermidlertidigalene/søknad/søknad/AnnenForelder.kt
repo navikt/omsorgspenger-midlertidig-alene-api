@@ -12,9 +12,8 @@ data class AnnenForelder(
     val situasjon: Situasjon,
     val situasjonBeskrivelse: String? = null,
     val periodeOver6Måneder: Boolean? = null, //Settes til null for å unngå default false
-    val vetLengdePåInnleggelseperioden: Boolean? = null, //Brukes hovedsaklig for validering, trenger ikke sendes med videre
-    @JsonFormat(pattern = "yyyy-MM-dd") val periodeFraOgMed: LocalDate? = null,
-    @JsonFormat(pattern = "yyyy-MM-dd") val periodeTilOgMed: LocalDate? = null
+    @JsonFormat(pattern = "yyyy-MM-dd") val periodeFraOgMed: LocalDate,
+    @JsonFormat(pattern = "yyyy-MM-dd") val periodeTilOgMed: LocalDate? = null // TODO: 20/04/2021 Fjern nullable etter lansering. Felt skal alltid settes.
 )
 
 internal fun AnnenForelder.valider(): MutableSet<Violation> {

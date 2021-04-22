@@ -25,6 +25,7 @@ import org.junit.BeforeClass
 import org.skyscreamer.jsonassert.JSONAssert
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -302,7 +303,8 @@ class ApplicationTest {
                 fnr = "0-0",
                 situasjon = Situasjon.SYKDOM,
                 situasjonBeskrivelse = " ",
-                periodeOver6Måneder = false
+                periodeOver6Måneder = false,
+                periodeFraOgMed = LocalDate.parse("2021-01-01")
             )
         )
 
@@ -332,7 +334,7 @@ class ApplicationTest {
                 {
                   "type": "entity",
                   "name": "AnnenForelder.situasjonBeskrivelse",
-                  "reason": "Situasjonsbeskrivelse på annenForelder kan ikke være null, tom eller kun white spaces ved SYKDOM eller ANNET",
+                  "reason": "Situasjonsbeskrivelse på annenForelder kan ikke være null, tom eller kun white spaces når situasjon er SYKDOM",
                   "invalid_value": " "
                 }
               ]

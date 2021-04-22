@@ -44,7 +44,7 @@ Valideringen sjekker dette og gir feil dersom en bolsk verdi er null.
   * Navn kan ikke være tom eller kun whitespaces.
   * fnr må være gyldig.
   * situasjon
-    * INNLAGT_I_HELSEINSTITUSJON --> vetLengdePåInnleggelseperioden må være satt. Basert på det valideres enten at 
+    * INNLAGT_I_HELSEINSTITUSJON --> Basert på det valideres enten at 
     periodeFraOgMed og periodeTilOgMed er satt, og at fraOgMed er før tilOgMed, eller at periodeOver6Måneder er satt. 
     Satt = ikke null
     * UTØVER_VERNEPLIKT og FENGSEL --> Valider dato som beskrevet over.
