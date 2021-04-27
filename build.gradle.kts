@@ -9,7 +9,7 @@ val kafkaVersion = ext.get("kafkaVersion").toString() // Alligned med version fr
 val k9FormatVersion = "5.1.33"
 
 plugins {
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "1.5.0"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
