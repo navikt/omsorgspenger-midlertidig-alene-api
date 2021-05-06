@@ -10,7 +10,6 @@ import no.nav.helse.dusseldorf.ktor.auth.withAdditionalClaimRules
 import no.nav.helse.dusseldorf.ktor.core.getOptionalList
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import no.nav.helse.dusseldorf.ktor.core.getRequiredString
-import no.nav.omsorgspengermidlertidigalene.general.auth.ApiGatewayApiKey
 import no.nav.omsorgspengermidlertidigalene.kafka.KafkaConfig
 import java.net.URI
 import java.time.Duration
@@ -42,11 +41,6 @@ data class Configuration(val config : ApplicationConfig) {
     }
 
     internal fun getK9OppslagUrl() = URI(config.getRequiredString("nav.gateways.k9_oppslag_url", secret = false))
-
-    internal fun getApiGatewayApiKey() : ApiGatewayApiKey {
-        val apiKey = config.getRequiredString(key = "nav.authorization.api_gateway.api_key", secret = true)
-        return ApiGatewayApiKey(value = apiKey)
-    }
 
     internal fun getKafkaConfig() = config.getRequiredString("nav.kafka.bootstrap_servers", secret = false).let { bootstrapServers ->
         val trustStore = config.getOptionalString("nav.trust_store.path", secret = false)?.let { trustStorePath ->

@@ -5,7 +5,6 @@ import com.github.kittinunf.fuel.httpGet
 import io.ktor.http.*
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.omsorgspengermidlertidigalene.general.CallId
-import no.nav.omsorgspengermidlertidigalene.general.auth.ApiGatewayApiKey
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdToken
 import java.net.URI
 

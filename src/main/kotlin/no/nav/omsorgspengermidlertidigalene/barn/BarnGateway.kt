@@ -13,7 +13,6 @@ import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.helse.dusseldorf.ktor.metrics.Operation
 import no.nav.omsorgspengermidlertidigalene.felles.k9SelvbetjeningOppslagKonfigurert
 import no.nav.omsorgspengermidlertidigalene.general.CallId
-import no.nav.omsorgspengermidlertidigalene.general.auth.ApiGatewayApiKey
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdToken
 import no.nav.omsorgspengermidlertidigalene.general.oppslag.K9OppslagGateway
 import org.slf4j.Logger

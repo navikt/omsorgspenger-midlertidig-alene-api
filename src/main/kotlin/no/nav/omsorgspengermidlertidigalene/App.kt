@@ -56,7 +56,6 @@ fun Application.omsorgpengermidlertidigaleneapi() {
     System.setProperty("dusseldorf.ktor.serializeProblemDetailsWithContentNegotiation", "true")
 
     val configuration = Configuration(environment.config)
-    val apiGatewayApiKey = configuration.getApiGatewayApiKey()
 
     install(ContentNegotiation) {
         jackson {
