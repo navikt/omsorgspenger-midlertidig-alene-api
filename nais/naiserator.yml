@@ -51,9 +51,7 @@ spec:
   vault:
     enabled: false
   envFrom:
-    - secret: omsorgspenger-midlertidig-alene-api.apigw-apikey
-    - secret: omsorgspenger-midlertidig-alene-api.sts-credentials
-    - secret: omsorgspenger-midlertidig-alene-api.storage-redis
+    - secret: {{app}}
     - configmap: loginservice-idporten
   env:
   {{#each env}}
