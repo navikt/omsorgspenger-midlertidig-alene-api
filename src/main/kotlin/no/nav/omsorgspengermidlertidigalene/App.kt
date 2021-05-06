@@ -105,8 +105,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
     install(Routing) {
 
         val søkerGateway = SøkerGateway(
-            baseUrl = configuration.getK9OppslagUrl(),
-            apiGatewayApiKey = apiGatewayApiKey
+            baseUrl = configuration.getK9OppslagUrl()
         )
 
         val søkerService = SøkerService(
@@ -118,8 +117,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
         )
 
         val barnGateway = BarnGateway(
-            baseUrl = configuration.getK9OppslagUrl(),
-            apiGatewayApiKey = apiGatewayApiKey
+            baseUrl = configuration.getK9OppslagUrl()
         )
 
         val barnService = BarnService(

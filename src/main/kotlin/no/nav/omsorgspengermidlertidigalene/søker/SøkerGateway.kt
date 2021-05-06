@@ -24,9 +24,8 @@ import java.time.Duration
 import java.time.LocalDate
 
 class SøkerGateway (
-    baseUrl: URI,
-    private val apiGatewayApiKey: ApiGatewayApiKey
-) : K9OppslagGateway(baseUrl, apiGatewayApiKey) {
+    baseUrl: URI
+) : K9OppslagGateway(baseUrl) {
 
     private companion object {
         private val logger: Logger = LoggerFactory.getLogger("nav.SokerGateway")
@@ -90,8 +89,7 @@ class SøkerGateway (
         ).toString()
             .httpGet()
             .header(
-                HttpHeaders.Accept to "text/plain",
-                apiGatewayApiKey.headerKey to apiGatewayApiKey.value
+                HttpHeaders.Accept to "text/plain"
             )
 
         val (_, _, result) = Operation.monitored(
