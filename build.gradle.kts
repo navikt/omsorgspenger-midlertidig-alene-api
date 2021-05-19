@@ -9,8 +9,8 @@ val kafkaVersion = ext.get("kafkaVersion").toString() // Alligned med version fr
 val k9FormatVersion = "5.1.33"
 
 plugins {
-    kotlin("jvm") version "1.4.32"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    kotlin("jvm") version "1.5.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 buildscript {
@@ -31,7 +31,7 @@ dependencies {
     implementation("no.nav.helse:dusseldorf-ktor-client:$dusseldorfKtorVersion")
     implementation("no.nav.helse:dusseldorf-oauth2-client:$dusseldorfKtorVersion")
     implementation("io.lettuce:lettuce-core:5.3.5.RELEASE")
-    implementation("com.github.fppt:jedis-mock:0.1.16")
+    implementation("com.github.fppt:jedis-mock:0.17.0")
 
     // Test
     testImplementation("no.nav.helse:dusseldorf-test-support:$dusseldorfKtorVersion")
@@ -97,5 +97,5 @@ tasks.withType<ShadowJar> {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.8.3"
+    gradleVersion = "7.0.1"
 }
