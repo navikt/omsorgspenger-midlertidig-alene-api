@@ -1,13 +1,8 @@
 package no.nav.omsorgspengermidlertidigalene.mellomlagring
 
 import com.github.fppt.jedismock.RedisServer
-import com.typesafe.config.ConfigFactory
-import io.ktor.config.*
 import io.ktor.util.*
-import no.nav.omsorgspengermidlertidigalene.Configuration
-import no.nav.omsorgspengermidlertidigalene.TestConfiguration
 import no.nav.omsorgspengermidlertidigalene.redis.RedisConfig
-import no.nav.omsorgspengermidlertidigalene.redis.RedisMockUtil
 import no.nav.omsorgspengermidlertidigalene.redis.RedisStore
 import org.awaitility.Awaitility
 import org.awaitility.Durations
@@ -86,16 +81,16 @@ class MellomlagringTest {
         assertEquals(forventetVerdi, faktiskVerdi)
 
         val ttl = mellomlagringService.getTTLInMs(key)
-        assertNotEquals(ttl, "-2")
-        assertNotEquals(ttl, "-1")
+        assertNotEquals(ttl, -2)
+        assertNotEquals(ttl, -1)
 
         forventetVerdi = "test2"
         mellomlagringService.updateMellomlagring(key, forventetVerdi)
         faktiskVerdi = mellomlagringService.getMellomlagring(key)
         assertEquals(forventetVerdi, faktiskVerdi)
 
-        assertNotEquals(ttl, "-2")
-        assertNotEquals(ttl, "-1")
+        assertNotEquals(ttl, -2)
+        assertNotEquals(ttl, -1)
     }
 
     @Test
@@ -113,8 +108,8 @@ class MellomlagringTest {
         logger.info("Hentet mellomlagret verdi = {}", faktiskVerdi)
         assertEquals(søknad, faktiskVerdi)
 
-        assertNotEquals(mellomlagringService.getTTLInMs(fnr), "-2")
-        assertNotEquals(mellomlagringService.getTTLInMs(fnr), "-1")
+        assertNotEquals(mellomlagringService.getTTLInMs(fnr), -2)
+        assertNotEquals(mellomlagringService.getTTLInMs(fnr), -1)
 
         Awaitility.waitAtMost(Durations.ONE_SECOND).untilAsserted {
             faktiskVerdi = mellomlagringService.getMellomlagring(fnr)
