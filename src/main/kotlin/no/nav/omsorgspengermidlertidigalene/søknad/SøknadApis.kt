@@ -2,7 +2,6 @@ package no.nav.omsorgspengermidlertidigalene.søknad
 
 import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.locations.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -26,18 +25,13 @@ import java.time.ZonedDateTime
 
 private val logger: Logger = LoggerFactory.getLogger("nav.soknadApis")
 
-@KtorExperimentalLocationsAPI
 fun Route.søknadApis(
     søknadService: SøknadService,
     barnService: BarnService,
     søkerService: SøkerService,
     idTokenProvider: IdTokenProvider
 ) {
-
-    @Location(SØKNAD_URL)
-    class sendSøknad
-
-    post { _ : sendSøknad ->
+    post(SØKNAD_URL) {
         logger.info("Mottatt ny søknad.")
 
         logger.trace("Mapper søknad")
@@ -81,10 +75,7 @@ fun Route.søknadApis(
         call.respond(HttpStatusCode.Accepted)
     }
 
-    @Location(VALIDERING_URL)
-    class validerSoknad
-
-    post { _: validerSoknad ->
+    post(VALIDERING_URL) {
         val søknad = call.receive<Søknad>()
         val idToken = idTokenProvider.getIdToken(call)
         val callId = call.getCallId()
