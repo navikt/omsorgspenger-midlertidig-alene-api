@@ -11,7 +11,7 @@ import java.io.File
 import java.util.*
 
 private val logger: Logger = LoggerFactory.getLogger(KafkaConfig::class.java)
-private const val ID_PREFIX = "srv-oms-alene-mtk-"
+private const val ID_PREFIX = "oms-alene-mtk-"
 
 class KafkaConfig(
     bootstrapServers: String,
