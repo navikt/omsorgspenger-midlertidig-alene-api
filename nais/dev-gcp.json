@@ -2,6 +2,7 @@
   "app": "omsorgspenger-midlertidig-alene-api",
   "cluster": "dev-gcp",
   "namespace": "dusseldorf",
+  "kafka-pool" : "nav-dev",
   "team": "dusseldorf",
   "minReplicas": "1",
   "maxReplicas": "2",

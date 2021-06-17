@@ -45,8 +45,7 @@ object TestConfiguration {
         // Kafka
         kafkaEnvironment?.let {
             map["nav.kafka.bootstrap_servers"] = it.brokersURL
-            map["nav.kafka.username"] = it.username()
-            map["nav.kafka.password"] = it.password()
+            map["nav.kafka.transactionalId"] = "omsorgsdager-aleneomsorg-api"
         }
 
         map["nav.redis.host"] = "localhost"

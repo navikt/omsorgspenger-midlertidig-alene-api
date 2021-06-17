@@ -155,6 +155,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
                 søkerService = søkerService,
                 søknadService = SøknadService(
                     søkerService = søkerService,
+                    barnService = barnService,
                     kafkaProducer = søknadKafkaProducer
                 )
             )
