@@ -9,13 +9,14 @@ import no.nav.omsorgspengermidlertidigalene.barn.BarnService
 import no.nav.omsorgspengermidlertidigalene.felles.SØKNAD_URL
 import no.nav.omsorgspengermidlertidigalene.felles.VALIDERING_URL
 import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
+import no.nav.omsorgspengermidlertidigalene.general.CallId
+import no.nav.omsorgspengermidlertidigalene.general.auth.IdToken
 import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
 import no.nav.omsorgspengermidlertidigalene.general.getCallId
 import no.nav.omsorgspengermidlertidigalene.general.metadata
 import no.nav.omsorgspengermidlertidigalene.k9format.tilK9Format
 import no.nav.omsorgspengermidlertidigalene.søker.Søker
 import no.nav.omsorgspengermidlertidigalene.søker.SøkerService
-import no.nav.omsorgspengermidlertidigalene.søker.validate
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Søknad
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.valider
 import org.slf4j.Logger
@@ -32,44 +33,18 @@ fun Route.søknadApis(
     idTokenProvider: IdTokenProvider
 ) {
     post(SØKNAD_URL) {
-        logger.info("Mottatt ny søknad.")
-
-        logger.trace("Mapper søknad")
         val søknad = call.receive<Søknad>()
-        logger.trace("Søknad mappet.")
+        logger.info(formaterStatuslogging(søknad.søknadId, "mottatt"))
 
-        logger.trace("Oppdaterer barn med identitetsnummer")
-        val listeOverBarnMedFnr = barnService.hentNåværendeBarn(idTokenProvider.getIdToken(call), call.getCallId())
-        søknad.oppdaterBarnMedFnr(listeOverBarnMedFnr)
-        logger.info("Oppdatering av identitetsnummer på barn OK")
-
-        val idToken = idTokenProvider.getIdToken(call)
-        val callId = call.getCallId()
+        val(idToken, callId) = call.hentIdTokenOgCallId(idTokenProvider)
         val mottatt = ZonedDateTime.now(ZoneOffset.UTC)
-
-        logger.trace("Henter søker")
-        val søker: Søker = søkerService.getSøker(idToken = idToken, callId = callId)
-        logger.trace("Søker hentet.")
-
-        logger.trace("Validerer søker.")
-        søker.validate()
-        logger.trace("Søker OK.")
-
-        logger.info("Mapper om til K9Format")
-        val k9Format = søknad.tilK9Format(mottatt, søker)
-
-        logger.trace("Validerer søknad")
-        søknad.valider(k9Format)
-        logger.trace("Validering OK.")
-
-        logger.info(formaterStatuslogging(søknad.søknadId, "validert OK"))
 
         søknadService.registrer(
             søknad = søknad,
             metadata = call.metadata(),
             mottatt = mottatt,
-            søker = søker,
-            k9Format = k9Format
+            idToken = idToken,
+            callId = callId
         )
 
         call.respond(HttpStatusCode.Accepted)
@@ -77,14 +52,16 @@ fun Route.søknadApis(
 
     post(VALIDERING_URL) {
         val søknad = call.receive<Søknad>()
-        val idToken = idTokenProvider.getIdToken(call)
-        val callId = call.getCallId()
+        val(idToken, callId) = call.hentIdTokenOgCallId(idTokenProvider)
         val mottatt = ZonedDateTime.now(ZoneOffset.UTC)
 
         logger.trace("Henter søker")
         val søker: Søker = søkerService.getSøker(idToken = idToken, callId = callId)
         logger.trace("Søker hentet.")
-        
+
+        val listeOverBarnMedFnr = barnService.hentNåværendeBarn(idToken, callId)
+        søknad.oppdaterBarnMedFnr(listeOverBarnMedFnr)
+
         val k9Format = søknad.tilK9Format(mottatt, søker)
 
         logger.trace("Validerer søknad...")
@@ -93,3 +70,6 @@ fun Route.søknadApis(
         call.respond(HttpStatusCode.Accepted)
     }
 }
+
+private fun ApplicationCall.hentIdTokenOgCallId(idTokenProvider: IdTokenProvider): Pair<IdToken, CallId> =
+    Pair(idTokenProvider.getIdToken(this), getCallId())

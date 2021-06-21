@@ -33,7 +33,7 @@ class SøknadKafkaProducer(
         OMS_MIDLERTIDIG_ALENE_MOTTATT_TOPIC.valueSerializer
     )
 
-    internal fun produce(
+    internal fun produserKafkaMelding(
         søknad: KomplettSøknad,
         metadata: Metadata
     ) {
