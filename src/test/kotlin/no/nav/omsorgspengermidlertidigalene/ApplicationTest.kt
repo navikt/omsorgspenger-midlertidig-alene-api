@@ -6,7 +6,6 @@ import com.typesafe.config.ConfigFactory
 import io.ktor.config.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import io.ktor.util.*
 import no.nav.common.KafkaEnvironment
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import no.nav.helse.getAuthCookie
@@ -36,7 +35,6 @@ private const val gyldigFodselsnummerA = "290990123456"
 private const val gyldigFodselsnummerB = "25118921464"
 private const val ikkeMyndigFnr = "12125012345"
 
-@KtorExperimentalAPI
 class ApplicationTest {
 
     private companion object {

@@ -1,7 +1,6 @@
 package no.nav.omsorgspengermidlertidigalene.mellomlagring
 
 import com.github.fppt.jedismock.RedisServer
-import io.ktor.util.*
 import no.nav.omsorgspengermidlertidigalene.redis.RedisConfig
 import no.nav.omsorgspengermidlertidigalene.redis.RedisStore
 import org.awaitility.Awaitility
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.test.*
 
-@KtorExperimentalAPI
 class MellomlagringTest {
     private companion object {
         val logger = LoggerFactory.getLogger(MellomlagringTest::class.java)
