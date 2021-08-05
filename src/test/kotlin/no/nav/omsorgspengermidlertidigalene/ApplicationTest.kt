@@ -20,7 +20,6 @@ import no.nav.omsorgspengermidlertidigalene.wiremock.stubK9OppslagSoker
 import no.nav.omsorgspengermidlertidigalene.wiremock.stubOppslagHealth
 import org.json.JSONObject
 import org.junit.AfterClass
-import org.junit.BeforeClass
 import org.skyscreamer.jsonassert.JSONAssert
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -72,13 +71,8 @@ class ApplicationTest {
 
         val engine = TestApplicationEngine(createTestEnvironment {
             config = getConfig(kafkaEnvironment)
-        })
-
-
-        @BeforeClass
-        @JvmStatic
-        fun buildUp() {
-            engine.start(wait = true)
+        }).apply {
+            start(wait = true)
         }
 
         @AfterClass
