@@ -8,7 +8,6 @@ val kafkaEmbeddedEnvVersion = ext.get("kafkaEmbeddedEnvVersion").toString()
 val kafkaVersion = ext.get("kafkaVersion").toString() // Alligned med version fra kafka-embedded-env
 val k9FormatVersion = "5.1.33"
 val fuelVersion = "2.3.1"
-val kotlinVersion = "1.5.21"
 
 plugins {
     kotlin("jvm") version "1.5.21"
