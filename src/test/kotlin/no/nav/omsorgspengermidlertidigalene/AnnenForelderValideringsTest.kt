@@ -4,8 +4,8 @@ import no.nav.helse.dusseldorf.ktor.core.Violation
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.AnnenForelder
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Situasjon
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.valider
-import org.junit.Test
 import java.time.LocalDate
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class AnnenForelderValidatorTest {

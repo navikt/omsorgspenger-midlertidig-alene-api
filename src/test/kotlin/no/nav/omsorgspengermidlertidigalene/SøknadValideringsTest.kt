@@ -5,8 +5,9 @@ import no.nav.omsorgspengermidlertidigalene.felles.starterMedFodselsdato
 import no.nav.omsorgspengermidlertidigalene.k9format.tilK9Format
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.Barn
 import no.nav.omsorgspengermidlertidigalene.søknad.søknad.valider
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
 import java.time.ZonedDateTime
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class SøknadValideringsTest {
@@ -28,44 +29,52 @@ internal class SøknadValideringsTest {
         søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
     }
 
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom harForståttRettigheterOgPlikter er false`(){
+    @Test
+    fun `Feiler dersom harForståttRettigheterOgPlikter er false`() {
         val søknad = SøknadUtils.gyldigSøknad.copy(
             harForståttRettigheterOgPlikter = false
         )
-        søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        Assertions.assertThrows(Throwblem::class.java) {
+            søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        }
     }
 
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom harBekreftetOpplysninger er false`(){
+    @Test
+    fun `Feiler dersom harBekreftetOpplysninger er false`() {
         val søknad = SøknadUtils.gyldigSøknad.copy(
             harBekreftetOpplysninger = false
         )
-        søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        Assertions.assertThrows(Throwblem::class.java) {
+            søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        }
     }
 
-    @Test(expected = Throwblem::class)
-    fun `Feiler dersom annen forelder har ugyldig fnr`(){
+    @Test
+    fun `Feiler dersom annen forelder har ugyldig fnr`() {
         val søknad = SøknadUtils.gyldigSøknad.copy(
             annenForelder = SøknadUtils.gyldigSøknad.annenForelder.copy(
                 fnr = ugyldigFødselsnummer
             )
         )
-        søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        Assertions.assertThrows(Throwblem::class.java){
+            søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        }
     }
 
-    @Test(expected =  Throwblem::class)
-    fun `Feiler dersom annen forelder sitt navn er ugydlig`(){
+    @Test
+    fun `Feiler dersom annen forelder sitt navn er ugydlig`() {
         val søknad = SøknadUtils.gyldigSøknad.copy(
             annenForelder = SøknadUtils.gyldigSøknad.annenForelder.copy(
                 navn = "   "
             )
         )
-        søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        Assertions.assertThrows(Throwblem::class.java) {
+            søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        }
     }
 
-    @Test(expected =  Throwblem::class)
-    fun `Feiler dersom barn ikke har identitetsnummer`(){
+    @Test
+    fun `Feiler dersom barn ikke har identitetsnummer`() {
         val søknad = SøknadUtils.gyldigSøknad.copy(
             barn = listOf(
                 Barn(
@@ -75,11 +84,13 @@ internal class SøknadValideringsTest {
                 )
             )
         )
-        søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        Assertions.assertThrows(Throwblem::class.java) {
+            søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        }
     }
 
-    @Test(expected =  Throwblem::class)
-    fun `Feiler dersom barn ikke har gyldig identitetsnummer`(){
+    @Test
+    fun `Feiler dersom barn ikke har gyldig identitetsnummer`() {
         val søknad = SøknadUtils.gyldigSøknad.copy(
             barn = listOf(
                 Barn(
@@ -89,11 +100,13 @@ internal class SøknadValideringsTest {
                 )
             )
         )
-        søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        Assertions.assertThrows(Throwblem::class.java) {
+            søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        }
     }
 
-    @Test(expected =  Throwblem::class)
-    fun `Feiler dersom barn ikke har navn`(){
+    @Test
+    fun `Feiler dersom barn ikke har navn`() {
         val søknad = SøknadUtils.gyldigSøknad.copy(
             barn = listOf(
                 Barn(
@@ -103,15 +116,19 @@ internal class SøknadValideringsTest {
                 )
             )
         )
-        søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        Assertions.assertThrows(Throwblem::class.java) {
+            søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        }
     }
 
-    @Test(expected =  Throwblem::class)
-    fun `Feiler dersom barn er tom liste`(){
+    @Test
+    fun `Feiler dersom barn er tom liste`() {
         val søknad = SøknadUtils.gyldigSøknad.copy(
             barn = listOf()
         )
-        søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        Assertions.assertThrows(Throwblem::class.java) {
+            søknad.valider(søknad.tilK9Format(mottatt, SøknadUtils.søker))
+        }
     }
 
 }

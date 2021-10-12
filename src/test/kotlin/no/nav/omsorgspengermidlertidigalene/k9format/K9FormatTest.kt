@@ -3,11 +3,11 @@ package no.nav.omsorgspengermidlertidigalene.k9format
 import no.nav.k9.søknad.JsonUtils
 import no.nav.omsorgspengermidlertidigalene.SøknadUtils
 import no.nav.omsorgspengermidlertidigalene.SøknadUtils.søker
-import org.junit.Test
 import org.skyscreamer.jsonassert.JSONAssert
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
+import kotlin.test.Test
 
 class K9FormatTest {
 
@@ -45,7 +45,8 @@ class K9FormatTest {
                       "periode": "2020-01-01/2020-10-01"
                     },
                     "begrunnelse": null
-                  }
+                  },
+                  "journalposter": []
                 }
         """.trimIndent()
 
