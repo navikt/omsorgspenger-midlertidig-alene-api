@@ -53,7 +53,7 @@ dependencies {
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
 
     testImplementation("org.skyscreamer:jsonassert:1.5.0")
-    testImplementation("org.awaitility:awaitility-kotlin:4.1.0")
+    testImplementation("org.awaitility:awaitility-kotlin:4.1.1")
 }
 
 repositories {
