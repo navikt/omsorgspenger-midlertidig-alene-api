@@ -124,6 +124,44 @@ class ApplicationTest {
     }
 
     @Test
+    fun `Hente søker hvor man får 451 fra oppslag`() {
+        wireMockServer.stubK9OppslagSoker(
+            statusCode = HttpStatusCode.fromValue(451),
+            responseBody =
+            //language=json
+            """
+            {
+                "detail": "Policy decision: DENY - Reason: (NAV-bruker er i live AND NAV-bruker er ikke myndig)",
+                "instance": "/meg",
+                "type": "/problem-details/tilgangskontroll-feil",
+                "title": "tilgangskontroll-feil",
+                "status": 451
+            }
+            """.trimIndent()
+        )
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = SØKER_URL,
+            expectedCode = HttpStatusCode.fromValue(451),
+            expectedResponse =
+            //language=json
+            """
+            {
+                "type": "/problem-details/tilgangskontroll-feil",
+                "title": "tilgangskontroll-feil",
+                "status": 451,
+                "instance": "/soker",
+                "detail": "Tilgang nektet."
+            }
+            """.trimIndent(),
+            cookie = getAuthCookie(ikkeMyndigFnr)
+        )
+
+        wireMockServer.stubK9OppslagSoker()
+    }
+
+    @Test
     fun `Hente søker som ikke er myndig`() {
         requestAndAssert(
             httpMethod = HttpMethod.Get,
@@ -142,6 +180,44 @@ class ApplicationTest {
                 }
             """.trimIndent()
         )
+    }
+
+    @Test
+    fun `Hente barn hvor man får 451 fra oppslag`(){
+        wireMockServer.stubK9OppslagBarn(
+            statusCode = HttpStatusCode.fromValue(451),
+            responseBody =
+            //language=json
+            """
+            {
+                "detail": "Policy decision: DENY - Reason: (NAV-bruker er i live AND NAV-bruker er ikke myndig)",
+                "instance": "/meg",
+                "type": "/problem-details/tilgangskontroll-feil",
+                "title": "tilgangskontroll-feil",
+                "status": 451
+            }
+            """.trimIndent()
+        )
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = BARN_URL,
+            expectedCode = HttpStatusCode.fromValue(451),
+            expectedResponse =
+            //language=json
+            """
+            {
+                "type": "/problem-details/tilgangskontroll-feil",
+                "title": "tilgangskontroll-feil",
+                "status": 451,
+                "instance": "/barn",
+                "detail": "Tilgang nektet."
+            }
+            """.trimIndent(),
+            cookie = getAuthCookie(ikkeMyndigFnr)
+        )
+
+        wireMockServer.stubK9OppslagBarn() // reset til default mapping
     }
 
     @Test
