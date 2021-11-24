@@ -15,7 +15,7 @@ fun AnnenForelder.tilK9AnnenForelder(): no.nav.k9.søknad.ytelse.omsorgspenger.u
     )
 
 fun AnnenForelder.tilK9Periode(): Periode? {
-    return if (periodeFraOgMed != null && periodeTilOgMed != null) {
+    return if (periodeTilOgMed != null) {
         Periode(periodeFraOgMed, periodeTilOgMed)
     } else null
 }
