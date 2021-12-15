@@ -10,7 +10,7 @@ val k9FormatVersion = "5.4.28"
 val fuelVersion = "2.3.1"
 
 plugins {
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
