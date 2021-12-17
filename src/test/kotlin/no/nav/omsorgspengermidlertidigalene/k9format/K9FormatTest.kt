@@ -46,10 +46,13 @@ class K9FormatTest {
                     },
                     "begrunnelse": null
                   },
+                  "begrunnelseForInnsending" : {
+                    "tekst" : null
+                  },
                   "journalposter": []
                 }
         """.trimIndent()
-
+        println(JsonUtils.toString(k9Format))
         JSONAssert.assertEquals(forventetK9FormatJson, JsonUtils.toString(k9Format), true)
     }
 
