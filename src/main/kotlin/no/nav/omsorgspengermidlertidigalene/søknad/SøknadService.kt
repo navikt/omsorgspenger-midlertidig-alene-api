@@ -1,10 +1,10 @@
 package no.nav.omsorgspengermidlertidigalene.søknad
 
+import no.nav.helse.dusseldorf.ktor.auth.IdToken
 import no.nav.omsorgspengermidlertidigalene.barn.BarnService
 import no.nav.omsorgspengermidlertidigalene.felles.Metadata
 import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
 import no.nav.omsorgspengermidlertidigalene.general.CallId
-import no.nav.omsorgspengermidlertidigalene.general.auth.IdToken
 import no.nav.omsorgspengermidlertidigalene.k9format.tilK9Format
 import no.nav.omsorgspengermidlertidigalene.kafka.SøknadKafkaProducer
 import no.nav.omsorgspengermidlertidigalene.søker.Søker

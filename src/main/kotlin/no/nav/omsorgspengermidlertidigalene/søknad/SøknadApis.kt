@@ -5,13 +5,13 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import no.nav.helse.dusseldorf.ktor.auth.IdToken
+import no.nav.helse.dusseldorf.ktor.auth.IdTokenProvider
 import no.nav.omsorgspengermidlertidigalene.barn.BarnService
 import no.nav.omsorgspengermidlertidigalene.felles.SØKNAD_URL
 import no.nav.omsorgspengermidlertidigalene.felles.VALIDERING_URL
 import no.nav.omsorgspengermidlertidigalene.felles.formaterStatuslogging
 import no.nav.omsorgspengermidlertidigalene.general.CallId
-import no.nav.omsorgspengermidlertidigalene.general.auth.IdToken
-import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenProvider
 import no.nav.omsorgspengermidlertidigalene.general.getCallId
 import no.nav.omsorgspengermidlertidigalene.general.metadata
 import no.nav.omsorgspengermidlertidigalene.k9format.tilK9Format

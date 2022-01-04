@@ -3,9 +3,9 @@ package no.nav.omsorgspengermidlertidigalene.general.oppslag
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.httpGet
 import io.ktor.http.*
+import no.nav.helse.dusseldorf.ktor.auth.IdToken
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.omsorgspengermidlertidigalene.general.CallId
-import no.nav.omsorgspengermidlertidigalene.general.auth.IdToken
 import java.net.URI
 
 abstract class K9OppslagGateway(
