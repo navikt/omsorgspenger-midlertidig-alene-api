@@ -7,12 +7,17 @@ metadata:
     team: {{team}}
 spec:
   image: {{ image }}
+  port: 8080
   azure:
     application:
       enabled: true
       tenant: {{ tenant }}
-  port: 8080
+  tokenx:
+    enabled: true
   accessPolicy:
+    inbound:
+      rules:
+        - application: omsorgspenger-midlertidig-alene-dialog
     outbound:
       rules:
         - application: omsorgspenger-midlertidig-alene-api-redis

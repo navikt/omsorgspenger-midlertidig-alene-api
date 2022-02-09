@@ -10,9 +10,7 @@ import io.ktor.jackson.*
 import io.ktor.metrics.micrometer.*
 import io.ktor.routing.*
 import io.prometheus.client.hotspot.DefaultExports
-import no.nav.helse.dusseldorf.ktor.auth.IdTokenProvider
-import no.nav.helse.dusseldorf.ktor.auth.allIssuers
-import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
+import no.nav.helse.dusseldorf.ktor.auth.*
 import no.nav.helse.dusseldorf.ktor.core.*
 import no.nav.helse.dusseldorf.ktor.health.HealthReporter
 import no.nav.helse.dusseldorf.ktor.health.HealthRoute
@@ -21,10 +19,11 @@ import no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages
 import no.nav.helse.dusseldorf.ktor.jackson.dusseldorfConfigured
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import no.nav.helse.dusseldorf.ktor.metrics.init
+import no.nav.helse.dusseldorf.oauth2.client.CachedAccessTokenClient
 import no.nav.omsorgspengermidlertidigalene.barn.BarnGateway
 import no.nav.omsorgspengermidlertidigalene.barn.BarnService
 import no.nav.omsorgspengermidlertidigalene.barn.barnApis
-import no.nav.omsorgspengermidlertidigalene.general.auth.IdTokenStatusPages
+import no.nav.omsorgspengermidlertidigalene.general.systemauth.AccessTokenClientResolver
 import no.nav.omsorgspengermidlertidigalene.kafka.SøknadKafkaProducer
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.MellomlagringService
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.mellomlagringApis
@@ -52,6 +51,8 @@ fun Application.omsorgpengermidlertidigaleneapi() {
     System.setProperty("dusseldorf.ktor.serializeProblemDetailsWithContentNegotiation", "true")
 
     val configuration = Configuration(environment.config)
+    val accessTokenClientResolver = AccessTokenClientResolver(environment.config.clients())
+    val tokenxClient = CachedAccessTokenClient(accessTokenClientResolver.tokenxClient)
 
     install(ContentNegotiation) {
         jackson {
@@ -82,10 +83,7 @@ fun Application.omsorgpengermidlertidigaleneapi() {
     install(Authentication) {
         multipleJwtIssuers(
             issuers = issuers,
-            extractHttpAuthHeader = {call ->
-                idTokenProvider.getIdToken(call)
-                    .somHttpAuthHeader()
-            }
+            extractHttpAuthHeader = { call -> idTokenProvider.getIdToken(call).somHttpAuthHeader() }
         )
     }
 
@@ -98,7 +96,9 @@ fun Application.omsorgpengermidlertidigaleneapi() {
     install(Routing) {
 
         val søkerGateway = SøkerGateway(
-            baseUrl = configuration.getK9OppslagUrl()
+            baseUrl = configuration.getK9OppslagUrl(),
+            exchangeTokenClient = tokenxClient,
+            k9SelvbetjeningOppslagTokenxAudience = configuration.getK9SelvbetjeningOppslagTokenxAudience()
         )
 
         val søkerService = SøkerService(
@@ -110,7 +110,9 @@ fun Application.omsorgpengermidlertidigaleneapi() {
         )
 
         val barnGateway = BarnGateway(
-            baseUrl = configuration.getK9OppslagUrl()
+            baseUrl = configuration.getK9OppslagUrl(),
+            exchangeTokenClient = tokenxClient,
+            k9SelvbetjeningOppslagTokenxAudience = configuration.getK9SelvbetjeningOppslagTokenxAudience()
         )
 
         val barnService = BarnService(

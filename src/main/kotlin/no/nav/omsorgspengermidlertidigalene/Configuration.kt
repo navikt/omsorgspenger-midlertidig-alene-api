@@ -8,6 +8,7 @@ import no.nav.helse.dusseldorf.ktor.auth.issuers
 import no.nav.helse.dusseldorf.ktor.auth.withAdditionalClaimRules
 import no.nav.helse.dusseldorf.ktor.core.getOptionalList
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
+import no.nav.helse.dusseldorf.ktor.core.getRequiredList
 import no.nav.helse.dusseldorf.ktor.core.getRequiredString
 import no.nav.omsorgspengermidlertidigalene.kafka.KafkaConfig
 import java.net.URI
@@ -15,13 +16,14 @@ import java.time.Duration
 
 data class Configuration(val config : ApplicationConfig) {
 
-    private val loginServiceClaimRules = setOf(
+    private val claimRules = setOf(
         EnforceEqualsOrContains("acr", "Level4")
     )
 
     internal fun issuers() = config.issuers().withAdditionalClaimRules(mapOf(
-        "login-service-v1" to loginServiceClaimRules,
-        "login-service-v2" to loginServiceClaimRules
+        "login-service-v1" to claimRules,
+        "login-service-v2" to claimRules,
+        "tokenx" to claimRules
     ))
 
     internal fun getCookieName(): String {
@@ -39,6 +41,9 @@ data class Configuration(val config : ApplicationConfig) {
     }
 
     internal fun getK9OppslagUrl() = URI(config.getRequiredString("nav.gateways.k9_oppslag_url", secret = false))
+    internal fun getK9SelvbetjeningOppslagTokenxAudience(): Set<String> = getScopesFor("k9_selvbetjening_oppslag_tokenx_audience")
+
+    private fun getScopesFor(operation: String) = config.getRequiredList("nav.auth.scopes.$operation", secret = false, builder = { it }).toSet()
 
     internal fun getKafkaConfig() = config.getRequiredString("nav.kafka.bootstrap_servers", secret = false).let { bootstrapServers ->
         val trustStore = config.getOptionalString("nav.kafka.truststore_path", secret = false)?.let { trustStorePath ->
