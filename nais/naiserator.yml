@@ -15,6 +15,9 @@ spec:
   tokenx:
     enabled: true
   accessPolicy:
+    inbound:
+      rules:
+        - application: omsorgspenger-midlertidig-alene-dialog
     outbound:
       rules:
         - application: omsorgspenger-midlertidig-alene-api-redis
