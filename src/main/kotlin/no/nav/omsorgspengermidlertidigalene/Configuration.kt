@@ -16,14 +16,14 @@ import java.time.Duration
 
 data class Configuration(val config : ApplicationConfig) {
 
-    private val serviceClaimRules = setOf(
+    private val claimRules = setOf(
         EnforceEqualsOrContains("acr", "Level4")
     )
 
     internal fun issuers() = config.issuers().withAdditionalClaimRules(mapOf(
-        "login-service-v1" to serviceClaimRules,
-        "login-service-v2" to serviceClaimRules,
-        "tokenx" to serviceClaimRules
+        "login-service-v1" to claimRules,
+        "login-service-v2" to claimRules,
+        "tokenx" to claimRules
     ))
 
     internal fun getCookieName(): String {
