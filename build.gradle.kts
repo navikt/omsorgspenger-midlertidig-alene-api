@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "3.1.6.7-c48e02f"
+val dusseldorfKtorVersion = "3.1.6.7-3fd207a"
 val ktorVersion = ext.get("ktorVersion").toString()
 val mainClass = "no.nav.omsorgspengermidlertidigalene.AppKt"
 val kafkaEmbeddedEnvVersion = ext.get("kafkaEmbeddedEnvVersion").toString()
@@ -16,7 +16,7 @@ plugins {
 
 buildscript {
     // Henter ut diverse dependency versjoner, i.e. ktorVersion.
-    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/c48e02f6fc77e86e5e2db673d54708efa41819d7/gradle/dusseldorf-ktor.gradle.kts")
+    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/3fd207a05b907d554c00976daeef107e4cc7947b/gradle/dusseldorf-ktor.gradle.kts")
 }
 
 dependencies {
@@ -37,10 +37,10 @@ dependencies {
     implementation("io.lettuce:lettuce-core:5.3.5.RELEASE")
     implementation("com.github.fppt:jedis-mock:1.0.0")
 
-    //K9-format
+    // K9-format
     implementation("no.nav.k9:soknad:$k9FormatVersion")
 
-    // kafka
+    // Kafka
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
 
     // Test

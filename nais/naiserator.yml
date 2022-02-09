@@ -7,11 +7,13 @@ metadata:
     team: {{team}}
 spec:
   image: {{ image }}
+  port: 8080
   azure:
     application:
       enabled: true
       tenant: {{ tenant }}
-  port: 8080
+  tokenx:
+    enabled: true
   accessPolicy:
     outbound:
       rules:

@@ -7,8 +7,9 @@ import io.ktor.config.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import no.nav.common.KafkaEnvironment
+import no.nav.helse.TestUtils.getAuthCookie
+import no.nav.helse.TestUtils.getTokenDingsToken
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
-import no.nav.helse.getAuthCookie
 import no.nav.omsorgspengermidlertidigalene.felles.*
 import no.nav.omsorgspengermidlertidigalene.kafka.Topics
 import no.nav.omsorgspengermidlertidigalene.mellomlagring.started
@@ -30,9 +31,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-private const val gyldigFodselsnummerA = "290990123456"
-private const val gyldigFodselsnummerB = "25118921464"
-private const val ikkeMyndigFnr = "12125012345"
+
 
 class ApplicationTest {
 
@@ -44,17 +43,23 @@ class ApplicationTest {
             .withAzureSupport()
             .withNaisStsSupport()
             .withLoginServiceSupport()
+            .withTokendingsSupport()
             .omsorgspengerMidlertidigAleneApiConfig()
             .build()
             .stubOppslagHealth()
             .stubK9OppslagBarn()
             .stubK9OppslagSoker()
 
-        val redisServer: RedisServer = RedisServer
-            .newRedisServer().started()
+        val redisServer: RedisServer = RedisServer.newRedisServer().started()
+
+        private const val gyldigFodselsnummerA = "290990123456"
+        private const val gyldigFodselsnummerB = "25118921464"
+        private const val ikkeMyndigFnr = "12125012345"
 
         private val kafkaEnvironment = KafkaWrapper.bootstrap()
         private val kafkaTestConsumer = kafkaEnvironment.testConsumer()
+        val tokenXToken = getTokenDingsToken(fnr = gyldigFodselsnummerA)
+
 
         fun getConfig(kafkaEnvironment: KafkaEnvironment): ApplicationConfig {
             val fileConfig = ConfigFactory.load()
@@ -104,11 +109,33 @@ class ApplicationTest {
     }
 
     @Test
+    fun `Hente søker med tokenx`() {
+        requestAndAssert(
+            httpMethod = HttpMethod.Get,
+            path = SØKER_URL,
+            expectedCode = HttpStatusCode.OK,
+            jwtToken = tokenXToken,
+            expectedResponse = """
+                {
+                  "aktørId": "12345",
+                  "fødselsdato": "1997-05-25",
+                  "fødselsnummer": "290990123456",
+                  "fornavn": "MOR",
+                  "mellomnavn": "HEISANN",
+                  "etternavn": "MORSEN",
+                  "myndig": true
+                }
+            """.trimIndent()
+        )
+    }
+
+    @Test
     fun `Hente søker`() {
         requestAndAssert(
             httpMethod = HttpMethod.Get,
             path = SØKER_URL,
             expectedCode = HttpStatusCode.OK,
+            cookie = getAuthCookie(gyldigFodselsnummerA),
             expectedResponse = """
                 {
                   "aktørId": "12345",
@@ -227,6 +254,7 @@ class ApplicationTest {
             httpMethod = HttpMethod.Get,
             path = BARN_URL,
             expectedCode = HttpStatusCode.OK,
+            cookie = getAuthCookie(gyldigFodselsnummerA),
             //language=json
             expectedResponse = """
                 {
@@ -281,6 +309,7 @@ class ApplicationTest {
             httpMethod = HttpMethod.Post,
             path = SØKNAD_URL,
             expectedResponse = null,
+            cookie = getAuthCookie(gyldigFodselsnummerA),
             expectedCode = HttpStatusCode.Accepted,
             requestEntity = søknad
         )
@@ -296,6 +325,7 @@ class ApplicationTest {
         requestAndAssert(
             httpMethod = HttpMethod.Post,
             path = VALIDERING_URL,
+            cookie = getAuthCookie(gyldigFodselsnummerA),
             expectedResponse = """
                 {
                   "type": "/problem-details/invalid-request-parameters",
@@ -332,6 +362,25 @@ class ApplicationTest {
         requestAndAssert(
             httpMethod = HttpMethod.Post,
             path = SØKNAD_URL,
+            cookie = getAuthCookie(gyldigFodselsnummerA),
+            expectedResponse = null,
+            expectedCode = HttpStatusCode.Accepted,
+            requestEntity = søknad
+        )
+
+        val søknadSendtTilProsessering = hentSøknadSendtTilProsessering(søknadID)
+        verifiserAtInnholdetErLikt(JSONObject(søknad), søknadSendtTilProsessering)
+    }
+
+    @Test
+    fun `Sende gyldig søknad med tokenX og plukke opp fra kafka topic`() {
+        val søknadID = UUID.randomUUID().toString()
+        val søknad = SøknadUtils.gyldigSøknad.copy(søknadId = søknadID).somJson()
+
+        requestAndAssert(
+            httpMethod = HttpMethod.Post,
+            path = SØKNAD_URL,
+            jwtToken = tokenXToken,
             expectedResponse = null,
             expectedCode = HttpStatusCode.Accepted,
             requestEntity = søknad
@@ -379,6 +428,7 @@ class ApplicationTest {
         requestAndAssert(
             httpMethod = HttpMethod.Post,
             path = SØKNAD_URL,
+            cookie = getAuthCookie(gyldigFodselsnummerA),
             expectedResponse = """
             {
               "type": "/problem-details/invalid-request-parameters",
@@ -419,13 +469,14 @@ class ApplicationTest {
         requestEntity: String? = null,
         expectedResponse: String?,
         expectedCode: HttpStatusCode,
-        leggTilCookie: Boolean = true,
-        cookie: Cookie = getAuthCookie(gyldigFodselsnummerA)
+        jwtToken: String? = null,
+        cookie: Cookie? = null
     ): String? {
         val respons: String?
         with(engine) {
             handleRequest(httpMethod, path) {
-                if (leggTilCookie) addHeader(HttpHeaders.Cookie, cookie.toString())
+                if (cookie != null) addHeader(HttpHeaders.Cookie, cookie.toString())
+                if (jwtToken != null) addHeader(HttpHeaders.Authorization, "Bearer $jwtToken")
                 logger.info("Request Entity = $requestEntity")
                 addHeader(HttpHeaders.Accept, "application/json")
                 if (requestEntity != null) addHeader(HttpHeaders.ContentType, "application/json")
