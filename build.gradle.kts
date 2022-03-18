@@ -6,7 +6,7 @@ val ktorVersion = ext.get("ktorVersion").toString()
 val mainClass = "no.nav.omsorgspengermidlertidigalene.AppKt"
 val kafkaEmbeddedEnvVersion = ext.get("kafkaEmbeddedEnvVersion").toString()
 val kafkaVersion = ext.get("kafkaVersion").toString() // Alligned med version fra kafka-embedded-env
-val k9FormatVersion = "5.7.2"
+val k9FormatVersion = "5.8.3"
 val fuelVersion = "2.3.1"
 
 plugins {
