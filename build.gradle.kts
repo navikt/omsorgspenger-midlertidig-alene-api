@@ -1,13 +1,14 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "3.1.6.7-3fd207a"
+val dusseldorfKtorVersion = "3.1.6.7-05da1a0"
 val ktorVersion = ext.get("ktorVersion").toString()
 val mainClass = "no.nav.omsorgspengermidlertidigalene.AppKt"
 val kafkaEmbeddedEnvVersion = ext.get("kafkaEmbeddedEnvVersion").toString()
 val kafkaVersion = ext.get("kafkaVersion").toString() // Alligned med version fra kafka-embedded-env
-val k9FormatVersion = "5.7.2"
+val k9FormatVersion = "5.8.3"
 val fuelVersion = "2.3.1"
+val lettuceCoreVersion = "6.1.8.RELEASE"
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -16,7 +17,7 @@ plugins {
 
 buildscript {
     // Henter ut diverse dependency versjoner, i.e. ktorVersion.
-    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/3fd207a05b907d554c00976daeef107e4cc7947b/gradle/dusseldorf-ktor.gradle.kts")
+    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/05da1a09b4cad3aef489f934078ac8afafe155ae/gradle/dusseldorf-ktor.gradle.kts")
 }
 
 dependencies {
@@ -34,8 +35,8 @@ dependencies {
     // Client
     implementation("no.nav.helse:dusseldorf-ktor-client:$dusseldorfKtorVersion")
     implementation("no.nav.helse:dusseldorf-oauth2-client:$dusseldorfKtorVersion")
-    implementation("io.lettuce:lettuce-core:5.3.5.RELEASE")
-    implementation("com.github.fppt:jedis-mock:1.0.0")
+    implementation("io.lettuce:lettuce-core:$lettuceCoreVersion")
+    implementation("com.github.fppt:jedis-mock:1.0.1")
 
     // K9-format
     implementation("no.nav.k9:soknad:$k9FormatVersion")
@@ -51,7 +52,7 @@ dependencies {
         exclude(group = "org.eclipse.jetty")
     }
     testImplementation("org.skyscreamer:jsonassert:1.5.0")
-    testImplementation("org.awaitility:awaitility-kotlin:4.1.1")
+    testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
 
 }
 
